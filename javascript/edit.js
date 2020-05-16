@@ -53,6 +53,7 @@ function init() {
       });
     })
     .catch(function (error) {
+      alert("Sorry, you do not have permission");
       console.log("Error getting document:", error);
     });
 }
