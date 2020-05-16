@@ -14,11 +14,53 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 var provider = new firebase.auth.GoogleAuthProvider();
+var database = firebase.database();
 
+function createUser(uid, username, email) {
+  database.ref("users/" + uid).set({
+    username: username,
+    email: email,
+    hasHint: false,
+    hint: "",
+  });
+}
+
+function setUserHint(uid, hint) {
+  let updates = {};
+  updates["users/" + uid + "/hint"] = hint;
+  updates["users/" + uid + "/hasHint"] = true;
+  database.ref().update(updates);
+}
+
+function ready() {
+  $("#hint-btn").show();
+  $("#hint-btn").click(function () {
+    setUserHint(firebase.auth().currentUser.uid, "This is your hint : )");
+    console.log("Click");
+    $("#hint-btn").hide();
+  });
+}
 function init() {
   let user = firebase.auth().currentUser;
-
   $(".name").text(user.displayName);
+  console.log(user);
+  firebase
+    .database()
+    .ref("/users/" + user.uid)
+    .once("value")
+    .then(function (snapshot) {
+      console.log(snapshot.val());
+      var email = snapshot.val() && snapshot.val().email;
+      if (email === null) {
+        createUser(user.uid, user.displayName, user.email).then(() => ready());
+      } else {
+        if (snapshot.val().hasHint) {
+          alert(snapshot.val().hint);
+        } else {
+          ready();
+        }
+      }
+    });
 }
 
 firebase
@@ -57,3 +99,7 @@ firebase
     // ...
     console.log(error);
   });
+
+$(document).ready(function () {
+  $("#hint-btn").hide();
+});

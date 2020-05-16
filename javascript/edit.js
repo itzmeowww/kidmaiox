@@ -14,10 +14,46 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 var provider = new firebase.auth.GoogleAuthProvider();
-var database = firebase.database();
 var db = firebase.firestore();
 
-function init() {}
+function init() {
+  var docRef = db.collection("hint");
+  docRef
+    .get()
+    .then(function (snapshot) {
+      hints = snapshot.docs.map((doc) => doc.data());
+      hints.forEach((element) => {
+        console.log(element.hint);
+        let theHint = $(".hint:last");
+        $(".hintList").append(theHint.clone());
+        theHint.text(element.hint);
+      });
+
+      $(".hintForm").show();
+      $(".submitHintForm").click(function () {
+        let hint = $("#myHint").val();
+        if (hint === "") {
+          alert("Hint can not be empty");
+        } else {
+          docRef
+            .add({
+              email: "",
+              hasChosen: false,
+              hint: hint,
+            })
+            .then(function () {
+              let theHint = $(".hint:last");
+              $(".hintList").append(theHint.clone());
+              theHint.text(hint);
+            })
+            .catch((err) => console.log(err));
+        }
+      });
+    })
+    .catch(function (error) {
+      console.log("Error getting document:", error);
+    });
+}
 
 firebase
   .auth()
