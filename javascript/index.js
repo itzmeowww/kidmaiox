@@ -115,7 +115,8 @@ firebase
       ) {
         init();
       } else {
-        firebase.auth().signInWithRedirect(provider);
+        $(".signIn-btn").show();
+        alert("Please use email with @mail.kmutt.ac.th");
       }
     } else {
     }
