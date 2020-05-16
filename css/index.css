@@ -63,7 +63,7 @@ body {
 }
 .hint {
   text-align: center;
-  color: yellow;
+  color: white;
   font-size: 30px;
   transition: all 0.5s;
 }
@@ -76,4 +76,21 @@ body {
   text-align: center;
   color: white;
   font-size: 20px;
+}
+.name-text {
+  padding: 20px;
+  background-color: rgb(29, 29, 29);
+}
+.desc {
+  font-size: 30px;
+  margin-bottom: 20px;
+  color: red;
+}
+.title {
+  font-size: 16px;
+  font-family: "Open Sans", sans-serif;
+  color: #e1ad01;
+  font-weight: bold;
+  position: absolute;
+  top: 30px;
 }

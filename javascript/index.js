@@ -72,6 +72,9 @@ function ready() {
   });
 }
 function init() {
+  $(".name-text").show();
+  $(".title").show();
+  $(".desc").show();
   let user = firebase.auth().currentUser;
   $(".name").text(user.displayName);
   console.log(user);
@@ -137,6 +140,9 @@ firebase
 
 $(document).ready(function () {
   $("#hint-btn").hide();
+  $(".desc").hide();
+  $(".title").hide();
+  $(".name-text").hide();
   $(".signIn-btn").click(function () {
     $(".signIn-btn").text("Loading...");
     firebase.auth().signInWithRedirect(provider);
