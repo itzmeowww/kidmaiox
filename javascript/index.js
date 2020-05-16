@@ -33,11 +33,13 @@ function setUserHint(uid, hint) {
   database.ref().update(updates);
 }
 function getHint(hints) {
+  $("#hint-btn").text("Pairing");
   let hint;
   console.log(hints);
   while (true) {
     hint = hints[Math.floor(Math.random() * hints.length)];
     if (hint.hasChosen == false) {
+      $("#hint-btn").hide();
       return hint;
     }
   }
@@ -67,8 +69,6 @@ function ready() {
       .catch(function (error) {
         console.log("Error getting document:", error);
       });
-
-    $("#hint-btn").hide();
   });
 }
 function init() {
@@ -116,9 +116,11 @@ firebase
         init();
       } else {
         $(".signIn-btn").show();
+        $(".signIn-btn").text("Click Me Now");
         alert("Please use email with @mail.kmutt.ac.th");
       }
     } else {
+      $(".signIn-btn").text("Click Me Now");
     }
   })
   .catch(function (error) {
@@ -136,6 +138,7 @@ firebase
 $(document).ready(function () {
   $("#hint-btn").hide();
   $(".signIn-btn").click(function () {
+    $(".signIn-btn").text("Loading...");
     firebase.auth().signInWithRedirect(provider);
   });
 });

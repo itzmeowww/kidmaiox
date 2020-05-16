@@ -1,4 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+@font-face {
+  font-family: "nightmare";
+  src: url("./nightmare.TTF");
+}
+* {
+  font-family: "nightmare";
+}
+
 html {
   /* background-image: url("../pics/bps.jpg"); */
   /* background-repeat: no-repeat, no-repeat; */
@@ -6,7 +14,7 @@ html {
   background-color: black;
   font-size: 20px;
   color: snow;
-  font-family: "Open Sans", sans-serif;
+
   /* background-size: cover; */
   display: flex;
   justify-content: center;
@@ -23,6 +31,9 @@ body {
   flex-direction: column;
 }
 .signIn-btn {
+  border-radius: 10px;
+  font-size: 36px;
+  font-weight: bold;
   background-color: snow;
   color: black;
   border: black;
@@ -30,25 +41,39 @@ body {
   transition: all 0.5s;
 }
 .signIn-btn:hover {
-  background-color: lightblue;
-  color: purple;
+  /* background-color: lightblue; */
+  color: red;
   transition: all 0.5s;
 }
 
 #hint-btn {
+  border-radius: 10px;
   background-color: snow;
   color: black;
   border: black;
+  font-size: 36px;
+  font-weight: bold;
   padding: 10px;
   margin: 10px;
   transition: all 0.5s;
 }
 #hint-btn:hover {
-  background-color: lightblue;
-  color: purple;
+  color: red;
   transition: all 0.5s;
 }
 .hint {
   text-align: center;
   color: yellow;
+  font-size: 30px;
+  transition: all 0.5s;
+}
+.hint:hover {
+  color: red;
+  transition: all 0.5s;
+}
+.name {
+  padding-top: 20px;
+  text-align: center;
+  color: white;
+  font-size: 20px;
 }

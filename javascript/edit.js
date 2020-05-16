@@ -15,7 +15,12 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var provider = new firebase.auth.GoogleAuthProvider();
 var db = firebase.firestore();
-
+function addToList(hint, email) {
+  let theHint = $(".hintContainer:last");
+  $(".hintList").append(theHint.clone());
+  theHint.children(".hint").text(hint);
+  theHint.children(".email").text(email);
+}
 function init() {
   var docRef = db.collection("hint");
   docRef
@@ -25,9 +30,7 @@ function init() {
       $(".hintCount").text(hints.length);
       hints.forEach((element) => {
         console.log(element.hint);
-        let theHint = $(".hint:last");
-        $(".hintList").append(theHint.clone());
-        theHint.text(element.hint + ", " + element.email);
+        addToList(element.hint, element.email);
       });
 
       $(".hintForm").show();
@@ -43,10 +46,8 @@ function init() {
               hint: hint,
             })
             .then(function () {
-              let theHint = $(".hint:last");
-              $(".hintList").append(theHint.clone());
               $(".hintCount").text(parseInt($(".hintCount").text()) + 1);
-              theHint.text(hint + ", ");
+              addToList(hint, " ");
             })
             .catch((err) => console.log(err));
         }
@@ -73,6 +74,7 @@ firebase
       $(".signIn-btn").hide();
       init();
     } else {
+      $(".signIn-btn").text("Sign Me In");
     }
   })
   .catch(function (error) {

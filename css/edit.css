@@ -1,4 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+@font-face {
+  font-family: "nightmare";
+  src: url("./nightmare.TTF");
+}
+* {
+  font-family: "nightmare";
+  font-weight: bold;
+}
 html {
   display: flex;
   justify-content: center;
@@ -11,14 +19,16 @@ body {
   background-color: black;
   font-size: 20px;
   color: snow;
-  font-family: "Open Sans", sans-serif;
+
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
 .signIn-btn {
+  border-radius: 10px;
   background-color: snow;
+  font-size: 30px;
   color: black;
   border: black;
   padding: 10px;
@@ -28,4 +38,42 @@ body {
   background-color: lightblue;
   color: purple;
   transition: all 0.5s;
+}
+.hintContainer {
+  padding: 5px;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: row;
+  color: white;
+  transition: all 0.2s;
+}
+
+.hintContainer:hover {
+  background-color: rosybrown;
+  color: black;
+}
+.hintList {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+}
+.hint {
+  max-width: 200px;
+  font-size: 16px;
+  font-weight: normal;
+  font-family: "Open Sans", sans-serif;
+}
+.email {
+  max-width: 190px;
+  font-size: 16px;
+  font-weight: normal;
+
+  margin-left: auto;
+  font-family: "Open Sans", sans-serif;
+}
+.hintCount {
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
 }
