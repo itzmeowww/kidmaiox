@@ -22,6 +22,7 @@ function init() {
     .get()
     .then(function (snapshot) {
       hints = snapshot.docs.map((doc) => doc.data());
+      $(".hintCount").text(hints.length);
       hints.forEach((element) => {
         console.log(element.hint);
         let theHint = $(".hint:last");
@@ -37,14 +38,15 @@ function init() {
         } else {
           docRef
             .add({
-              email: "None",
+              email: "",
               hasChosen: false,
               hint: hint,
             })
             .then(function () {
               let theHint = $(".hint:last");
               $(".hintList").append(theHint.clone());
-              theHint.text(hint + ", " + "None");
+              $(".hintCount").text(parseInt($(".hintCount").text()) + 1);
+              theHint.text(hint + ", ");
             })
             .catch((err) => console.log(err));
         }
