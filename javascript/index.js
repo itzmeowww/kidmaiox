@@ -15,6 +15,7 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var provider = new firebase.auth.GoogleAuthProvider();
 var database = firebase.database();
+var db = firebase.firestore();
 
 function createUser(uid, username, email) {
   database.ref("users/" + uid).set({
@@ -31,12 +32,41 @@ function setUserHint(uid, hint) {
   updates["users/" + uid + "/hasHint"] = true;
   database.ref().update(updates);
 }
-
+function getHint(hints) {
+  let hint;
+  console.log(hints);
+  while (true) {
+    hint = hints[Math.floor(Math.random() * hints.length)];
+    if (hint.hasChosen == false) {
+      return hint;
+    }
+  }
+}
 function ready() {
   $("#hint-btn").show();
   $("#hint-btn").click(function () {
-    setUserHint(firebase.auth().currentUser.uid, "This is your hint : )");
-    console.log("Click");
+    var docRef = db.collection("hint");
+    docRef
+      .get()
+      .then(function (snapshot) {
+        hints = snapshot.docs.map((doc) => {
+          let ret = doc.data();
+          ret["doc"] = doc;
+          return ret;
+        });
+        let myHint = getHint(hints);
+        setUserHint(firebase.auth().currentUser.uid, myHint.hint);
+        console.log(myHint);
+        docRef.doc(myHint.doc.id).update({
+          email: firebase.auth().currentUser.email,
+          hasChosen: true,
+        });
+        console.log(myHint);
+      })
+      .catch(function (error) {
+        console.log("Error getting document:", error);
+      });
+
     $("#hint-btn").hide();
   });
 }
@@ -52,7 +82,8 @@ function init() {
       console.log(snapshot.val());
       var email = snapshot.val() && snapshot.val().email;
       if (email === null) {
-        createUser(user.uid, user.displayName, user.email).then(() => ready());
+        createUser(user.uid, user.displayName, user.email);
+        ready();
       } else {
         if (snapshot.val().hasHint) {
           alert(snapshot.val().hint);

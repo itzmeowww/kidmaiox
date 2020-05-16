@@ -26,7 +26,7 @@ function init() {
         console.log(element.hint);
         let theHint = $(".hint:last");
         $(".hintList").append(theHint.clone());
-        theHint.text(element.hint);
+        theHint.text(element.hint + ", " + element.email);
       });
 
       $(".hintForm").show();
@@ -37,14 +37,14 @@ function init() {
         } else {
           docRef
             .add({
-              email: "",
+              email: "None",
               hasChosen: false,
               hint: hint,
             })
             .then(function () {
               let theHint = $(".hint:last");
               $(".hintList").append(theHint.clone());
-              theHint.text(hint);
+              theHint.text(hint + ", " + "None");
             })
             .catch((err) => console.log(err));
         }
