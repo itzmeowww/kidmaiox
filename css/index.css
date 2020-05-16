@@ -82,7 +82,6 @@ body {
   background-color: rgb(29, 29, 29);
 }
 .desc {
-  font-size: 30px;
   margin-bottom: 20px;
   color: red;
 }
@@ -93,4 +92,14 @@ body {
   font-weight: bold;
   position: absolute;
   top: 30px;
+}
+@media screen and (min-width: 0) {
+  .desc {
+    font-size: 25px;
+  }
+}
+@media screen and (min-width: 500px) {
+  .desc {
+    font-size: 30px;
+  }
 }
