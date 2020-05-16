@@ -55,6 +55,7 @@ function ready() {
           return ret;
         });
         let myHint = getHint(hints);
+        $(".hint").text(myHint.hint);
         setUserHint(firebase.auth().currentUser.uid, myHint.hint);
         console.log(myHint);
         docRef.doc(myHint.doc.id).update({
@@ -86,7 +87,7 @@ function init() {
         ready();
       } else {
         if (snapshot.val().hasHint) {
-          alert(snapshot.val().hint);
+          $(".hint").text(snapshot.val().hint);
         } else {
           ready();
         }
@@ -107,6 +108,7 @@ firebase
     var user = result.user;
     if (user) {
       let email = user.email;
+      $(".signIn-btn").hide();
       if (
         email.split("@")[1] === "mail.kmutt.ac.th" ||
         (DEBUG && email.split("@")[1] === "promma.ac.th")
@@ -116,7 +118,6 @@ firebase
         firebase.auth().signInWithRedirect(provider);
       }
     } else {
-      firebase.auth().signInWithRedirect(provider);
     }
   })
   .catch(function (error) {
@@ -133,4 +134,7 @@ firebase
 
 $(document).ready(function () {
   $("#hint-btn").hide();
+  $(".signIn-btn").click(function () {
+    firebase.auth().signInWithRedirect(provider);
+  });
 });

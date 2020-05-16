@@ -67,9 +67,9 @@ firebase
     // The signed-in user info.
     var user = result.user;
     if (user) {
+      $(".signIn-btn").hide();
       init();
     } else {
-      firebase.auth().signInWithRedirect(provider);
     }
   })
   .catch(function (error) {
@@ -83,3 +83,8 @@ firebase
     // ...
     console.log(error);
   });
+$(document).ready(function () {
+  $(".signIn-btn").click(function () {
+    firebase.auth().signInWithRedirect(provider);
+  });
+});

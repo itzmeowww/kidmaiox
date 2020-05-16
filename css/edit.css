@@ -1,0 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+html {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  max-width: 100%;
+  height: 100vh;
+}
+body {
+  background-color: black;
+  font-size: 20px;
+  color: snow;
+  font-family: "Open Sans", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.signIn-btn {
+  background-color: snow;
+  color: black;
+  border: black;
+  padding: 10px;
+  transition: all 0.5s;
+}
+.signIn-btn:hover {
+  background-color: lightblue;
+  color: purple;
+  transition: all 0.5s;
+}
