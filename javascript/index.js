@@ -26,10 +26,11 @@ function createUser(uid, username, email) {
   });
 }
 
-function setUserHint(uid, hint) {
+function setUserHint(uid, hint, codename) {
   let updates = {};
   updates["users/" + uid + "/hint"] = hint;
   updates["users/" + uid + "/hasHint"] = true;
+  updates["users/" + uid + "/codename"] = "- " + codename + " -";
   database.ref().update(updates);
 }
 function getHint(hints) {
@@ -58,7 +59,12 @@ function ready() {
         });
         let myHint = getHint(hints);
         $(".hint").text(myHint.hint);
-        setUserHint(firebase.auth().currentUser.uid, myHint.hint);
+        $(".codename").text(myHint.codename);
+        setUserHint(
+          firebase.auth().currentUser.uid,
+          myHint.hint,
+          myHint.codename
+        );
         console.log(myHint);
         docRef.doc(myHint.doc.id).update({
           email: firebase.auth().currentUser.email,
@@ -91,6 +97,7 @@ function init() {
       } else {
         if (snapshot.val().hasHint) {
           $(".hint").text(snapshot.val().hint);
+          $(".codename").text(snapshot.val().codename);
         } else {
           ready();
         }

@@ -15,11 +15,12 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var provider = new firebase.auth.GoogleAuthProvider();
 var db = firebase.firestore();
-function addToList(hint, email) {
+function addToList(name, hint, email) {
   let theHint = $(".hintContainer:last");
   $(".hintList").append(theHint.clone());
   theHint.children(".hint").text(hint);
   theHint.children(".email").text(email);
+  theHint.children(".name").text(name);
 }
 function init() {
   var docRef = db.collection("hint");
@@ -29,25 +30,26 @@ function init() {
       hints = snapshot.docs.map((doc) => doc.data());
       $(".hintCount").text(hints.length);
       hints.forEach((element) => {
-        console.log(element.hint);
-        addToList(element.hint, element.email);
+        addToList(element.codename, element.hint, element.email);
       });
 
       $(".hintForm").show();
       $(".submitHintForm").click(function () {
         let hint = $("#myHint").val();
+        let codename = $("#myName").val();
         if (hint === "") {
           alert("Hint can not be empty");
         } else {
           docRef
             .add({
+              codename: codename,
               email: "",
               hasChosen: false,
               hint: hint,
             })
             .then(function () {
               $(".hintCount").text(parseInt($(".hintCount").text()) + 1);
-              addToList(hint, " ");
+              addToList(codename, hint, " ");
             })
             .catch((err) => console.log(err));
         }
