@@ -19,6 +19,7 @@ var db = firebase.firestore();
 
 function createUser(uid, username, email) {
   database.ref("users/" + uid).set({
+    codename: "",
     username: username,
     email: email,
     hasHint: false,
@@ -30,7 +31,7 @@ function setUserHint(uid, hint, codename) {
   let updates = {};
   updates["users/" + uid + "/hint"] = hint;
   updates["users/" + uid + "/hasHint"] = true;
-  updates["users/" + uid + "/codename"] = "- " + codename + " -";
+  updates["users/" + uid + "/codename"] = codename;
   database.ref().update(updates);
 }
 function getHint(hints) {
@@ -59,7 +60,8 @@ function ready() {
         });
         let myHint = getHint(hints);
         $(".hint").text(myHint.hint);
-        $(".codename").text(myHint.codename);
+        $(".codename").text("- " + myHint.codename + " -");
+
         setUserHint(
           firebase.auth().currentUser.uid,
           myHint.hint,
@@ -97,7 +99,7 @@ function init() {
       } else {
         if (snapshot.val().hasHint) {
           $(".hint").text(snapshot.val().hint);
-          $(".codename").text(snapshot.val().codename);
+          $(".codename").text("- " + snapshot.val().codename + " -");
         } else {
           ready();
         }
