@@ -74,6 +74,7 @@ firebase
     var user = result.user;
     if (user) {
       $(".signIn-btn").hide();
+      $(".hintList").show();
       init();
     } else {
       $(".signIn-btn").text("Sign Me In");
@@ -91,6 +92,7 @@ firebase
     console.log(error);
   });
 $(document).ready(function () {
+  $(".hintList").hide();
   $(".signIn-btn").click(function () {
     firebase.auth().signInWithRedirect(provider);
   });

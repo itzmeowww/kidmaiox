@@ -66,18 +66,19 @@ body {
   color: white;
   font-size: 30px;
   transition: all 0.5s;
+  padding-bottom: 20px;
 }
 .hint:hover {
   color: red;
   transition: all 0.5s;
 }
 .name {
-  padding-top: 20px;
   text-align: center;
   color: white;
   font-size: 20px;
 }
 .name-text {
+  transition: all 0.5s;
   padding: 20px;
   background-color: rgb(29, 29, 29);
 }
@@ -111,4 +112,16 @@ body {
 .codename {
   margin-bottom: 20px;
   font-size: 30px;
+  color: snow;
+  transition: all 0.5s;
+}
+.codename:hover {
+  color: yellow;
+  transition: all 1s;
+}
+.dev {
+  color: rgba(255, 255, 255, 0.15);
+  position: absolute;
+  top: 95vh;
+  text-decoration: none;
 }

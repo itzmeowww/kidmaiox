@@ -40,6 +40,7 @@ body {
   transition: all 0.5s;
 }
 .hintContainer {
+  border-radius: 10px;
   padding: 5px;
   padding-top: 10px;
   display: flex;
@@ -49,11 +50,12 @@ body {
 }
 
 .hintContainer:hover {
-  background-color: rosybrown;
+  background-color: lightgreen;
   color: black;
 }
 .hintList {
   width: 500px;
+  max-width: calc(100vw - 10px);
   display: flex;
   flex-direction: column;
   font-family: "Open Sans", sans-serif;
@@ -61,20 +63,25 @@ body {
 }
 .hint {
   width: 200px;
+  max-width: 30vw;
   font-size: 16px;
   font-weight: normal;
   font-family: "Open Sans", sans-serif;
 }
 .email {
   width: 190px;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 30vw;
   font-size: 16px;
   font-weight: normal;
-
   margin-left: auto;
   font-family: "Open Sans", sans-serif;
 }
 .name {
   width: 100px;
+  max-width: 30vw;
+  padding-right: 5px;
   margin-left: auto;
   font-size: 16px;
   font-weight: normal;
@@ -85,4 +92,10 @@ body {
 .hintCount {
   font-family: "Open Sans", sans-serif;
   font-weight: normal;
+}
+.dev {
+  color: rgba(255, 255, 255, 0.15);
+  position: fixed;
+  top: 95vh;
+  text-decoration: none;
 }
