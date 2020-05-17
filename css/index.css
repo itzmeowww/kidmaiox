@@ -125,3 +125,7 @@ body {
   top: 95vh;
   text-decoration: none;
 }
+.dev > a {
+  color: rgba(255, 255, 255, 0.15);
+  text-decoration: none;
+}
