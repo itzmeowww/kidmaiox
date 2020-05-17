@@ -47,8 +47,10 @@ function getHint(hints) {
   }
 }
 function ready() {
+  $(".hint").hide();
   $("#hint-btn").show();
   $("#hint-btn").click(function () {
+    $("#hint-btn").text("Pairing");
     var docRef = db.collection("hint");
     docRef
       .get()
@@ -61,7 +63,7 @@ function ready() {
         let myHint = getHint(hints);
         $(".hint").text(myHint.hint);
         $(".codename").text("- " + myHint.codename + " -");
-
+        $(".hint").show();
         setUserHint(
           firebase.auth().currentUser.uid,
           myHint.hint,
@@ -80,6 +82,7 @@ function ready() {
   });
 }
 function init() {
+  $(".intro").hide();
   $(".name-text").show();
   $(".title").show();
   $(".desc").show();
@@ -98,12 +101,17 @@ function init() {
         ready();
       } else {
         if (snapshot.val().hasHint) {
+          $(".hint").show();
           $(".hint").text(snapshot.val().hint);
           $(".codename").text("- " + snapshot.val().codename + " -");
         } else {
           ready();
         }
       }
+    })
+    .catch((err) => {
+      console.log(err);
+      alert("Please use email with @mail.kmutt.ac.th");
     });
 }
 
@@ -149,6 +157,7 @@ firebase
 
 $(document).ready(function () {
   $("#hint-btn").hide();
+  $(".hint").hide();
   $(".desc").hide();
   $(".title").hide();
   $(".name-text").hide();
