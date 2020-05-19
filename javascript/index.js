@@ -37,7 +37,6 @@ function setUserHint(uid, hint, codename) {
 function getHint(hints) {
   $("#hint-btn").text("Pairing");
   let hint;
-  console.log(hints);
   while (true) {
     hint = hints[Math.floor(Math.random() * hints.length)];
     if (hint.hasChosen == false) {
@@ -61,14 +60,20 @@ function ready() {
           return ret;
         });
         let myHint = getHint(hints);
-        $(".hint").text(myHint.hint);
-        $(".codename").text("- " + myHint.codename + " -");
-        $(".hint").show();
+        $(".brew-pot-container").show();
         setUserHint(
           firebase.auth().currentUser.uid,
           myHint.hint,
           myHint.codename
         );
+        setTimeout(() => {
+          $(".brew-pot-container").hide();
+        }, 5000);
+
+        $(".hint").text(myHint.hint);
+        $(".codename").text("- " + myHint.codename + " -");
+        $(".hint").show();
+
         console.log(myHint);
         docRef.doc(myHint.doc.id).update({
           email: firebase.auth().currentUser.email,

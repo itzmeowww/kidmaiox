@@ -120,12 +120,14 @@ body {
   transition: all 1s;
 }
 .dev {
+  text-align: center;
   color: rgba(255, 255, 255, 0.15);
   position: absolute;
   top: 95vh;
   text-decoration: none;
 }
 .dev > a {
+  text-align: center;
   color: rgba(255, 255, 255, 0.15);
   text-decoration: none;
 }
@@ -140,4 +142,18 @@ body {
 .intro:hover {
   color: white;
   transition: all 1s;
+}
+
+.brew-pot-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  position: fixed;
+  z-index: 2;
+}
+
+#brew-pot {
 }
