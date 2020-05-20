@@ -105,3 +105,6 @@ body {
   color: rgba(255, 255, 255, 0.15);
   text-decoration: none;
 }
+.hintForm {
+  margin-top: 30px;
+}

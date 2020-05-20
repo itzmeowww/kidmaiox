@@ -23,63 +23,86 @@ function createUser(uid, username, email) {
     username: username,
     email: email,
     hasHint: false,
-    hint: "",
+    hintId: "",
+    hasHint2: false,
+    hint2Id: "",
   });
 }
 
-function setUserHint(uid, hint, codename) {
+function setUserHint(uid, hintId) {
   let updates = {};
-  updates["users/" + uid + "/hint"] = hint;
+  updates["users/" + uid + "/hintId"] = hintId;
   updates["users/" + uid + "/hasHint"] = true;
-  updates["users/" + uid + "/codename"] = codename;
   database.ref().update(updates);
 }
-function getHint(hints) {
+function setUserHint2(uid, hint2Id) {
+  let updates = {};
+  updates["users/" + uid + "/hint2Id"] = hint2Id;
+  updates["users/" + uid + "/hasHint2"] = true;
+  database.ref().update(updates);
+}
+
+function getHintId(hintId) {
   $("#hint-btn").text("Pairing");
-  let hint;
-  while (true) {
-    hint = hints[Math.floor(Math.random() * hints.length)];
-    if (hint.hasChosen == false) {
-      $("#hint-btn").hide();
-      return hint;
-    }
-  }
+  let id;
+  id = hintId[Math.floor(Math.random() * hintId.length)];
+  $("#hint-btn").hide();
+  return id;
+}
+
+function showHint(id) {
+  db.collection("hint")
+    .doc(id)
+    .onSnapshot(function (doc) {
+      let myHint = doc.data();
+      $(".hint").text(myHint.hint);
+      $(".codename").text("- " + myHint.codename + " -");
+    });
+  db.collection("hint")
+    .doc(id)
+    .get()
+    .then((snap) => {
+      let myHint = snap.data();
+      console.log("showHint : myHint", myHint);
+      $(".hint").text(myHint.hint);
+      $(".codename").text("- " + myHint.codename + " -");
+    })
+    .catch((err) => {
+      console.log("From showHint", err);
+    });
+  $(".hint").show();
 }
 function ready() {
   $(".hint").hide();
   $("#hint-btn").show();
   $("#hint-btn").click(function () {
     $("#hint-btn").text("Pairing");
-    var docRef = db.collection("hint");
+    var docRef = db.collection("hint").doc("list");
     docRef
       .get()
       .then(function (snapshot) {
-        hints = snapshot.docs.map((doc) => {
-          let ret = doc.data();
-          ret["doc"] = doc;
-          return ret;
-        });
-        let myHint = getHint(hints);
+        let hintId = snapshot.data().id;
+        let myId = getHintId(hintId);
+        console.log("Your Id ", myId);
+        const index = hintId.indexOf(myId);
+        if (index > -1) {
+          hintId.splice(index, 1);
+        }
+        let updates = {};
+        updates["id"] = hintId;
+        docRef.update(updates);
         $(".brew-pot-container").show();
-        setUserHint(
-          firebase.auth().currentUser.uid,
-          myHint.hint,
-          myHint.codename
-        );
+        setUserHint(firebase.auth().currentUser.uid, myId);
         setTimeout(() => {
           $(".brew-pot-container").hide();
         }, 5000);
 
-        $(".hint").text(myHint.hint);
-        $(".codename").text("- " + myHint.codename + " -");
-        $(".hint").show();
+        showHint(myId);
 
-        console.log(myHint);
-        docRef.doc(myHint.doc.id).update({
+        docRef.doc(myId).update({
           email: firebase.auth().currentUser.email,
           hasChosen: true,
         });
-        console.log(myHint);
       })
       .catch(function (error) {
         console.log("Error getting document:", error);
@@ -106,9 +129,7 @@ function init() {
         ready();
       } else {
         if (snapshot.val().hasHint) {
-          $(".hint").show();
-          $(".hint").text(snapshot.val().hint);
-          $(".codename").text("- " + snapshot.val().codename + " -");
+          showHint(snapshot.val().hintId);
         } else {
           ready();
         }
