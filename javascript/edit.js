@@ -24,40 +24,48 @@ function addToList(name, hint, email) {
 }
 function init() {
   var docRef = db.collection("hint");
-  docRef
+  var keyRef = db.collection("secret").doc("keys");
+  keyRef
     .get()
-    .then(function (snapshot) {
-      hints = snapshot.docs.map((doc) => doc.data());
-      $(".hintCount").text(hints.length);
-      hints.forEach((element) => {
-        addToList(element.codename, element.hint, element.email);
-      });
+    .then((snap) => {
+      docRef
+        .get()
+        .then(function (snapshot) {
+          hints = snapshot.docs.map((doc) => doc.data());
+          $(".hintCount").text(hints.length);
+          hints.forEach((element) => {
+            addToList(element.codename, element.hint, element.email);
+          });
 
-      $(".hintForm").show();
-      $(".submitHintForm").click(function () {
-        let hint = $("#myHint").val();
-        let codename = $("#myName").val();
-        if (hint === "") {
-          alert("Hint can not be empty");
-        } else {
-          docRef
-            .add({
-              codename: codename,
-              email: "",
-              hasChosen: false,
-              hint: hint,
-            })
-            .then(function () {
-              $(".hintCount").text(parseInt($(".hintCount").text()) + 1);
-              addToList(codename, hint, " ");
-            })
-            .catch((err) => console.log(err));
-        }
-      });
+          $(".hintForm").show();
+          $(".submitHintForm").click(function () {
+            let hint = $("#myHint").val();
+            let codename = $("#myName").val();
+            if (hint === "") {
+              alert("Hint can not be empty");
+            } else {
+              docRef
+                .add({
+                  codename: codename,
+                  email: "",
+                  hasChosen: false,
+                  hint: hint,
+                })
+                .then(function () {
+                  $(".hintCount").text(parseInt($(".hintCount").text()) + 1);
+                  addToList(codename, hint, " ");
+                })
+                .catch((err) => console.log(err));
+            }
+          });
+        })
+        .catch(function (error) {
+          alert("Sorry, you do not have permission");
+          console.log("Error getting document:", error);
+        });
     })
-    .catch(function (error) {
-      alert("Sorry, you do not have permission");
-      console.log("Error getting document:", error);
+    .catch((err) => {
+      alert("Sorry, You can not access this section");
     });
 }
 
