@@ -72,6 +72,7 @@ function showHint(id) {
     });
   $(".hint").show();
 }
+
 function ready() {
   $(".hint").hide();
   $("#hint-btn").show();
@@ -99,7 +100,7 @@ function ready() {
 
         showHint(myId);
 
-        docRef.doc(myId).update({
+        db.collection("hint").doc(myId).update({
           email: firebase.auth().currentUser.email,
           hasChosen: true,
         });
