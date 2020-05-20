@@ -25,7 +25,6 @@ function createUser(uid, username, email) {
     hasHint: false,
     hintId: "",
     hasHint2: false,
-    hint2Id: "",
   });
 }
 
@@ -35,9 +34,8 @@ function setUserHint(uid, hintId) {
   updates["users/" + uid + "/hasHint"] = true;
   database.ref().update(updates);
 }
-function setUserHint2(uid, hint2Id) {
+function setUserHint2(uid) {
   let updates = {};
-  updates["users/" + uid + "/hint2Id"] = hint2Id;
   updates["users/" + uid + "/hasHint2"] = true;
   database.ref().update(updates);
 }

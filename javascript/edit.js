@@ -16,21 +16,46 @@ let allIds = 0;
 firebase.initializeApp(firebaseConfig);
 var provider = new firebase.auth.GoogleAuthProvider();
 var db = firebase.firestore();
+function updateOutput() {
+  let ret = "";
+  $(".hintContainer").each(function () {
+    ret +=
+      $(this).find(".name").text() +
+      " " +
+      $(this).find(".hint").text() +
+      " " +
+      $(this).find(".email").text() +
+      "\n";
+  });
 
+  console.log(ret);
+  $(".output").val(ret);
+}
 function addToList(name, hint, email, id) {
   let theHint = $(".hintContainer:last");
   $(".hintList").append(theHint.clone());
   theHint.children(".hint").text(hint);
   theHint.children(".email").text(email);
   theHint.children(".name").text(name);
+  theHint.children(".del-btn").click(function () {
+    if (confirm("Delete this hint?")) {
+      //TODO reset user that has this hint
+      //TODO remove hint from db
+    }
+  });
+  theHint.children(".update-btn").click(function () {
+    //TODO show update form
+  });
   theHint.show();
   theHint.attr("id", id);
+  updateOutput();
 }
 function updateToList(name, hint, email, id) {
   let theHint = $("#" + id);
   theHint.children(".hint").text(hint);
   theHint.children(".email").text(email);
   theHint.children(".name").text(name);
+  updateOutput();
 }
 function showList(idList) {
   console.log(idList);
@@ -70,7 +95,7 @@ function init() {
         console.log("Change!");
         showList(doc.data().all_id);
       });
-
+      $(".output").show();
       docRef
         .doc("list")
         .get()
