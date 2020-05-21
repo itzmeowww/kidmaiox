@@ -11,11 +11,12 @@ var firebaseConfig = {
   measurementId: "G-VH6VDYQ4CS",
 };
 // Initialize Firebase
-let Ids = {};
+let Ids = [];
 let allIds = 0;
 firebase.initializeApp(firebaseConfig);
 var provider = new firebase.auth.GoogleAuthProvider();
 var db = firebase.firestore();
+
 function updateOutput() {
   let ret = "";
   $(".hintContainer").each(function () {
@@ -28,10 +29,11 @@ function updateOutput() {
       "\n";
   });
 
-  console.log(ret);
+  // console.log(ret);
   $(".output").val(ret);
 }
 function addToList(name, hint, email, id) {
+  console.log("create", id);
   let theHint = $(".hintContainer:last");
   $(".hintList").append(theHint.clone());
   theHint.children(".hint").text(hint);
@@ -39,12 +41,34 @@ function addToList(name, hint, email, id) {
   theHint.children(".name").text(name);
   theHint.children(".del-btn").click(function () {
     if (confirm("Delete this hint?")) {
+      db.collection("hint").doc(id).delete();
+      db.collection("hint")
+        .doc("list")
+        .get()
+        .then((snap) => {
+          let idList = snap.data().id;
+          let all_id = snap.data().all_id;
+          let index = idList.indexOf(id);
+          if (index > -1) {
+            idList.splice(index, 1);
+          }
+          index = all_id.indexOf(id);
+          if (index > -1) {
+            all_id.splice(index, 1);
+          }
+          db.collection("hint").doc("list").update({
+            id: idList,
+            all_id: all_id,
+          });
+        });
       //TODO reset user that has this hint
-      //TODO remove hint from db
     }
   });
   theHint.children(".update-btn").click(function () {
-    //TODO show update form
+    $(".updateForm").show();
+    $(".updateForm").attr("target", id);
+    $("#updateHint").val(hint);
+    $("#updateName").val(name);
   });
   theHint.show();
   theHint.attr("id", id);
@@ -59,6 +83,11 @@ function updateToList(name, hint, email, id) {
 }
 function showList(idList) {
   console.log(idList);
+  let theHint = $(".hintContainer:last").clone();
+  $(".hintList").empty();
+  $(".hintList").append(theHint);
+
+  $(".hintCount").text(idList.length);
   var docRef = db.collection("hint");
   idList.forEach((id) => {
     if (id != "") {
@@ -67,16 +96,13 @@ function showList(idList) {
         .get()
         .then((snap) => {
           let element = snap.data();
-          if (Ids[id] != true) {
-            Ids[id] = true;
-            allIds++;
-            $(".hintCount").text(allIds);
-            addToList(element.codename, element.hint, element.email, id);
-            docRef.doc(id).onSnapshot(function (doc) {
-              let element = doc.data();
-              updateToList(element.codename, element.hint, element.email, id);
-            });
-          }
+          console.log(element);
+          addToList(element.codename, element.hint, element.email, id);
+          docRef.doc(id).onSnapshot(function (data) {
+            let element = data.data();
+            console.log(element);
+            updateToList(element.codename, element.hint, element.email, id);
+          });
         })
         .catch((err) => {
           console.log("show ", err);
@@ -103,7 +129,7 @@ function init() {
           console.log(snapshot.data());
           let all_id = snapshot.data().all_id;
           let id = snapshot.data().id;
-          showList(all_id);
+          // showList(all_id);
           $(".hintForm").show();
           $(".submitHintForm").click(function () {
             let hint = $("#myHint").val();
@@ -171,6 +197,20 @@ firebase
     console.log(error);
   });
 $(document).ready(function () {
+  $(".closeUpdateForm").click(function () {
+    $(".updateForm").hide();
+  });
+  $(".submitUpdateHintForm").click(function () {
+    $(".updateForm").hide();
+    let hint = $("#updateHint").val();
+    let name = $("#updateName").val();
+    let id = $(".updateForm").attr("target");
+    console.log(hint, name, id);
+    db.collection("hint").doc(id).update({
+      hint: hint,
+      codename: name,
+    });
+  });
   $(".hintList").hide();
   $(".signIn-btn").click(function () {
     firebase.auth().signInWithRedirect(provider);

@@ -7,25 +7,22 @@
   font-family: "nightmare";
   font-weight: bold;
 }
-html {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  max-width: 100%;
-  height: 100vh;
-}
+
 body {
   background-color: black;
   font-size: 20px;
   color: snow;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  text-align: center;
+  align-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100vw;
+  max-width: 100%;
+  height: 100vh;
 }
 .signIn-btn {
+  position: relative;
+  top: 45vh;
   border-radius: 10px;
   background-color: snow;
   font-size: 30px;
@@ -54,17 +51,26 @@ body {
   color: black;
 }
 .hintList {
+  position: relative;
   width: 500px;
   max-width: calc(100vw - 10px);
   display: flex;
   flex-direction: column;
+  text-align: left;
   font-family: "Open Sans", sans-serif;
   font-weight: normal;
+  align-content: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 .hint {
   width: 200px;
   max-width: 30vw;
   font-size: 16px;
+  margin-left: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-weight: normal;
   font-family: "Open Sans", sans-serif;
 }
@@ -81,6 +87,9 @@ body {
   font-family: "Open Sans", sans-serif;
 }
 .name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   width: 100px;
   max-width: 30vw;
   padding-right: 5px;
@@ -97,17 +106,105 @@ body {
 }
 .dev {
   color: rgba(255, 255, 255, 0.15);
-  position: fixed;
-  top: 95vh;
+
+  position: relative;
+
   text-decoration: none;
+
+  margin-bottom: 25px;
 }
 .dev > a {
   color: rgba(255, 255, 255, 0.15);
   text-decoration: none;
 }
 .hintForm {
-  margin-top: 30px;
+  margin-top: 20px;
+  font-size: 16px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+}
+#myHint {
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+}
+#myName {
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+}
+.submitHintForm {
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+
+  transition: all 1s;
+}
+.submitHintForm :hover {
+  background-color: yellow;
+  transition: all 1s;
 }
 .output {
+  font-size: 16px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
   margin-top: 30px;
+  margin-bottom: 40px;
+  width: 500px;
+  height: 30vh;
+  max-width: 80vw;
+}
+.del-btn {
+  margin-right: 5px;
+  margin-left: 5px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+  border: none;
+  transition: all 0.5s;
+}
+.del-btn:hover {
+  background-color: yellow;
+  transition: all 0.5s;
+}
+
+.update-btn {
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+  border: none;
+  transition: all 0.5;
+}
+.update-btn:hover {
+  background-color: yellow;
+  transition: all 0.5s;
+}
+.updateForm {
+  position: fixed;
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+#updateHint {
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+  font-size: 14px;
+  margin-right: 10px;
+}
+#updateName {
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+  font-size: 14px;
+  margin-right: 10px;
+}
+.submitUpdateHintForm {
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+  font-size: 14px;
+  margin-right: 10px;
+}
+.closeUpdateForm {
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+  font-size: 14px;
 }
