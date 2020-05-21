@@ -41,11 +41,11 @@ function addToList(name, hint, email, id) {
   theHint.children(".name").text(name);
   theHint.children(".del-btn").click(function () {
     if (confirm("Delete this hint?")) {
-      db.collection("hint").doc(id).delete();
       db.collection("hint")
         .doc("list")
         .get()
         .then((snap) => {
+          db.collection("hint").doc(id).delete();
           let idList = snap.data().id;
           let all_id = snap.data().all_id;
           let index = idList.indexOf(id);
@@ -131,30 +131,6 @@ function init() {
           let id = snapshot.data().id;
           // showList(all_id);
           $(".hintForm").show();
-          $(".submitHintForm").click(function () {
-            let hint = $("#myHint").val();
-            let codename = $("#myName").val();
-            if (hint === "") {
-              alert("Hint can not be empty");
-            } else {
-              docRef
-                .add({
-                  codename: codename,
-                  email: "",
-                  hasChosen: false,
-                  hint: hint,
-                })
-                .then(function (snap) {
-                  all_id.push(snap.id);
-                  id.push(snap.id);
-                  docRef.doc("list").update({
-                    all_id: all_id,
-                    id: id,
-                  });
-                })
-                .catch((err) => console.log(err));
-            }
-          });
         })
         .catch(function (error) {
           alert("Sorry, you do not have permission");
@@ -214,5 +190,45 @@ $(document).ready(function () {
   $(".hintList").hide();
   $(".signIn-btn").click(function () {
     firebase.auth().signInWithRedirect(provider);
+  });
+
+  $(".submitHintForm").click(function () {
+    var docRef = db.collection("hint");
+    docRef
+      .doc("list")
+      .get()
+      .then(function (snapshot) {
+        console.log(snapshot.data());
+        let all_id = snapshot.data().all_id;
+        let id = snapshot.data().id;
+        // showList(all_id);
+        let hint = $("#myHint").val();
+        let codename = $("#myName").val();
+        if (hint === "") {
+          alert("Hint can not be empty");
+        } else {
+          docRef
+            .add({
+              codename: codename,
+              email: "",
+              hasChosen: false,
+              hint: hint,
+            })
+            .then(function (snap) {
+              all_id.push(snap.id);
+              id.push(snap.id);
+              docRef.doc("list").update({
+                all_id: all_id,
+                id: id,
+              });
+            })
+            .catch((err) => console.log(err));
+        }
+        $(".hintForm").show();
+      })
+      .catch(function (error) {
+        alert("Sorry, you do not have permission");
+        console.log("Error getting document:", error);
+      });
   });
 });
