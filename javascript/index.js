@@ -47,6 +47,8 @@ function getHintId(hintId) {
   $("#hint-btn").hide();
   return id;
 }
+let queueTime = null;
+let queueId;
 
 function showHint(id) {
   db.collection("hint")
@@ -70,43 +72,63 @@ function showHint(id) {
     });
   $(".hint").show();
 }
-let queueTime = null;
-let queueId;
 
 function giveHint() {
   var docRef = db.collection("hint").doc("list");
-  docRef
-    .get()
+  let uid = firebase.auth().currentUser.uid;
+  firebase
+    .database()
+    .ref("/users/" + uid)
+    .once("value")
     .then(function (snapshot) {
-      let hintId = snapshot.data().id;
-      let myId = getHintId(hintId);
-      console.log("Your Id ", myId);
-      const index = hintId.indexOf(myId);
-      if (index > -1) {
-        hintId.splice(index, 1);
+      if (snapshot.val().hasHint) {
+        showHint(snapshot.val().hintId);
+      } else {
+        docRef
+          .get()
+          .then(function (snapshot) {
+            let hintId = snapshot.data().id;
+            let myId = getHintId(hintId);
+            console.log("Your Id ", myId);
+            const index = hintId.indexOf(myId);
+            if (index > -1) {
+              hintId.splice(index, 1);
+            }
+            let updates = {};
+            updates["id"] = hintId;
+            docRef.update(updates).then(function () {
+              var q = db.collection("queue");
+              q.doc(queueId).delete();
+            });
+            $(".brew-pot-container").show();
+            setUserHint(firebase.auth().currentUser.uid, myId);
+            setTimeout(() => {
+              $(".brew-pot-container").hide();
+            }, 5000);
+
+            showHint(myId);
+
+            db.collection("hint").doc(myId).update({
+              email: firebase.auth().currentUser.email,
+              hasChosen: true,
+            });
+          })
+          .catch(function (error) {
+            console.log("Error getting document:", error);
+          });
       }
-      let updates = {};
-      updates["id"] = hintId;
-      docRef.update(updates);
-      $(".brew-pot-container").show();
-      setUserHint(firebase.auth().currentUser.uid, myId);
-      setTimeout(() => {
-        $(".brew-pot-container").hide();
-      }, 5000);
-
-      showHint(myId);
-
-      db.collection("hint").doc(myId).update({
-        email: firebase.auth().currentUser.email,
-        hasChosen: true,
-      });
-    })
-    .catch(function (error) {
-      console.log("Error getting document:", error);
     });
 }
 
 function addQueue() {
+  window.onbeforeunload = function (event) {
+    try {
+      var q = db.collection("queue");
+      q.doc(queueId).delete();
+    } catch (err) {
+      console.log(err);
+    }
+  };
   var q = db.collection("queue");
   queueTime = firebase.firestore.FieldValue.serverTimestamp();
   q.add({
@@ -120,8 +142,8 @@ function addQueue() {
       console.log(querySnapshot.docs[0].id);
       console.log(queueId);
       if (queueId == querySnapshot.docs[0].id) {
+        window.onbeforeunload = function (event) {};
         giveHint();
-        q.doc(queueId).delete();
       }
     } catch (err) {
       console.log(err);
@@ -222,11 +244,3 @@ $(document).ready(function () {
     firebase.auth().signInWithRedirect(provider);
   });
 });
-window.onbeforeunload = function (event) {
-  if (queueId != null) {
-    var q = db.collection("queue");
-    if (q.doc(queueId).exist()) {
-      q.doc(queueId).delete();
-    }
-  }
-};
