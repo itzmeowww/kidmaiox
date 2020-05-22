@@ -118,7 +118,7 @@ function init() {
     .get()
     .then((snap) => {
       docRef.doc("list").onSnapshot(function (doc) {
-        console.log("Change!");
+        //console.log("Change!");
         showList(doc.data().all_id);
       });
       $(".output").show();
@@ -126,7 +126,7 @@ function init() {
         .doc("list")
         .get()
         .then(function (snapshot) {
-          console.log(snapshot.data());
+          // console.log(snapshot.data());
           let all_id = snapshot.data().all_id;
           let id = snapshot.data().id;
           // showList(all_id);
@@ -181,7 +181,7 @@ $(document).ready(function () {
     let hint = $("#updateHint").val();
     let name = $("#updateName").val();
     let id = $(".updateForm").attr("target");
-    console.log(hint, name, id);
+    //console.log(hint, name, id);
     db.collection("hint").doc(id).update({
       hint: hint,
       codename: name,

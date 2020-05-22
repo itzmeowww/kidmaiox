@@ -89,7 +89,7 @@ function giveHint() {
           .then(function (snapshot) {
             let hintId = snapshot.data().id;
             let myId = getHintId(hintId);
-            console.log("Your Id ", myId);
+            //console.log("Your Id ", myId);
             const index = hintId.indexOf(myId);
             if (index > -1) {
               hintId.splice(index, 1);
@@ -138,9 +138,9 @@ function addQueue() {
   });
   q.orderBy("timestamp", "asc").onSnapshot(function (querySnapshot) {
     try {
-      console.log("----------------------");
-      console.log(querySnapshot.docs[0].id);
-      console.log(queueId);
+      // console.log("----------------------");
+      // console.log(querySnapshot.docs[0].id);
+      // console.log(queueId);
       if (queueId == querySnapshot.docs[0].id) {
         window.onbeforeunload = function (event) {};
         giveHint();
@@ -168,13 +168,13 @@ function init() {
   $(".desc").show();
   let user = firebase.auth().currentUser;
   $(".name").text(user.displayName);
-  console.log(user);
+  //console.log(user);
   firebase
     .database()
     .ref("/users/" + user.uid)
     .once("value")
     .then(function (snapshot) {
-      console.log(snapshot.val());
+      //console.log(snapshot.val());
       var email = snapshot.val() && snapshot.val().email;
       if (email === null) {
         createUser(user.uid, user.displayName, user.email);
