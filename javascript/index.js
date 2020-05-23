@@ -41,6 +41,10 @@ function setUserHint2(uid) {
 }
 
 function getHintId(hintId) {
+  if (hintId.length == 0) {
+    $("#hint-btn").hide();
+    return null;
+  }
   $("#hint-btn").text("Pairing");
   let id;
   id = hintId[Math.floor(Math.random() * hintId.length)];
@@ -63,7 +67,7 @@ function showHint(id) {
     .get()
     .then((snap) => {
       let myHint = snap.data();
-      console.log("showHint : myHint", myHint);
+      // console.log("showHint : myHint", myHint);
       $(".hint").text(myHint.hint);
       $(".codename").text("- " + myHint.codename + " -");
     })
@@ -89,29 +93,41 @@ function giveHint() {
           .then(function (snapshot) {
             let hintId = snapshot.data().id;
             let myId = getHintId(hintId);
-            //console.log("Your Id ", myId);
-            const index = hintId.indexOf(myId);
-            if (index > -1) {
-              hintId.splice(index, 1);
+            if (myId == null) {
+              try {
+                var q = db.collection("queue");
+                q.doc(queueId).delete();
+              } catch (err) {
+                console.log(err);
+              }
+              alert("Error code 1234 : Please contact admin");
+              $(".hint").text("Error getting hint :(");
+              $(".codename").text("- " + "Error getting name :(" + " -");
+            } else {
+              //console.log("Your Id ", myId);
+              const index = hintId.indexOf(myId);
+              if (index > -1) {
+                hintId.splice(index, 1);
+              }
+              let updates = {};
+              updates["id"] = hintId;
+              docRef.update(updates).then(function () {
+                var q = db.collection("queue");
+                q.doc(queueId).delete();
+              });
+              $(".brew-pot-container").show();
+              setUserHint(firebase.auth().currentUser.uid, myId);
+              setTimeout(() => {
+                $(".brew-pot-container").hide();
+              }, 5000);
+
+              showHint(myId);
+
+              db.collection("hint").doc(myId).update({
+                email: firebase.auth().currentUser.email,
+                hasChosen: true,
+              });
             }
-            let updates = {};
-            updates["id"] = hintId;
-            docRef.update(updates).then(function () {
-              var q = db.collection("queue");
-              q.doc(queueId).delete();
-            });
-            $(".brew-pot-container").show();
-            setUserHint(firebase.auth().currentUser.uid, myId);
-            setTimeout(() => {
-              $(".brew-pot-container").hide();
-            }, 5000);
-
-            showHint(myId);
-
-            db.collection("hint").doc(myId).update({
-              email: firebase.auth().currentUser.email,
-              hasChosen: true,
-            });
           })
           .catch(function (error) {
             console.log("Error getting document:", error);
