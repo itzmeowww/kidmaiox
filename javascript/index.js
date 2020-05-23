@@ -101,8 +101,8 @@ function giveHint() {
                 console.log(err);
               }
               alert("Error code 1234 : Please contact admin");
-              $(".hint").text("Error getting hint :(");
-              $(".codename").text("- " + "Error getting name :(" + " -");
+              $(".hint").hide();
+              $(".codename").hide();
             } else {
               //console.log("Your Id ", myId);
               const index = hintId.indexOf(myId);
