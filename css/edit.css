@@ -123,14 +123,13 @@ body {
   font-family: "Open Sans", sans-serif;
   font-weight: normal;
 }
-#myHint {
-  font-family: "Open Sans", sans-serif;
-  font-weight: normal;
-}
+#myHint,
+#myHint2,
 #myName {
   font-family: "Open Sans", sans-serif;
   font-weight: normal;
 }
+
 .submitHintForm {
   font-family: "Open Sans", sans-serif;
   font-weight: normal;
@@ -176,7 +175,7 @@ body {
 }
 .updateForm {
   position: fixed;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.5);
   width: 100vw;
   height: 100vh;
   z-index: 2;
@@ -185,18 +184,15 @@ body {
   align-items: center;
   justify-content: center;
 }
-#updateHint {
-  font-family: "Open Sans", sans-serif;
-  font-weight: normal;
-  font-size: 14px;
-  margin-right: 10px;
-}
+#updateHint,
+#updateHint2,
 #updateName {
   font-family: "Open Sans", sans-serif;
   font-weight: normal;
   font-size: 14px;
   margin-right: 10px;
 }
+
 .submitUpdateHintForm {
   font-family: "Open Sans", sans-serif;
   font-weight: normal;

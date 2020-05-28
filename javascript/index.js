@@ -25,6 +25,7 @@ function createUser(uid, username, email) {
     hasHint: false,
     hintId: "",
     hasHint2: false,
+    pickHInt2: false,
   });
 }
 
@@ -32,6 +33,11 @@ function setUserHint(uid, hintId) {
   let updates = {};
   updates["users/" + uid + "/hintId"] = hintId;
   updates["users/" + uid + "/hasHint"] = true;
+
+  let luck = Math.round(Math.random() * 10);
+  if (luck <= 3) {
+    updates["users/" + uid + "/hasHint2"] = true;
+  }
   database.ref().update(updates);
 }
 function setUserHint2(uid) {
@@ -126,6 +132,7 @@ function giveHint() {
               db.collection("hint").doc(myId).update({
                 email: firebase.auth().currentUser.email,
                 hasChosen: true,
+                uid: firebase.auth().currentUser.uid,
               });
             }
           })

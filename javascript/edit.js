@@ -14,8 +14,9 @@ var firebaseConfig = {
 let Ids = [];
 let allIds = 0;
 firebase.initializeApp(firebaseConfig);
-var provider = new firebase.auth.GoogleAuthProvider();
-var db = firebase.firestore();
+let provider = new firebase.auth.GoogleAuthProvider();
+let db = firebase.firestore();
+let database = firebase.database();
 
 function updateOutput() {
   let ret = "";
@@ -25,6 +26,8 @@ function updateOutput() {
       " " +
       $(this).find(".hint").text() +
       " " +
+      $(this).find(".hint2").text() +
+      " " +
       $(this).find(".email").text() +
       "\n";
   });
@@ -32,51 +35,64 @@ function updateOutput() {
   // console.log(ret);
   $(".output").val(ret);
 }
-function addToList(name, hint, email, id) {
+function addToList(name, hint, hint2, email, id) {
   console.log("create", id);
   let theHint = $(".hintContainer:last");
   $(".hintList").append(theHint.clone());
   theHint.children(".hint").text(hint);
+  theHint.children(".hint2").text(hint2);
   theHint.children(".email").text(email);
   theHint.children(".name").text(name);
   theHint.children(".del-btn").click(function () {
     if (confirm("Delete this hint?")) {
       db.collection("hint")
-        .doc("list")
+        .doc(id)
         .get()
         .then((snap) => {
-          db.collection("hint").doc(id).delete();
-          let idList = snap.data().id;
-          let all_id = snap.data().all_id;
-          let index = idList.indexOf(id);
-          if (index > -1) {
-            idList.splice(index, 1);
-          }
-          index = all_id.indexOf(id);
-          if (index > -1) {
-            all_id.splice(index, 1);
-          }
-          db.collection("hint").doc("list").update({
-            id: idList,
-            all_id: all_id,
-          });
+          let uid = snap.data().uid;
+          db.collection("hint")
+            .doc("list")
+            .get()
+            .then((snap) => {
+              db.collection("hint").doc(id).delete();
+              let idList = snap.data().id;
+              let all_id = snap.data().all_id;
+              let index = idList.indexOf(id);
+              if (index > -1) {
+                idList.splice(index, 1);
+              }
+              index = all_id.indexOf(id);
+              if (index > -1) {
+                all_id.splice(index, 1);
+              }
+              db.collection("hint").doc("list").update({
+                id: idList,
+                all_id: all_id,
+              });
+              database.ref("users/" + uid + "/").update({
+                hasHint: false,
+                hasHint2: false,
+                hintId: "",
+              });
+            });
         });
-      //TODO reset user that has this hint
     }
   });
   theHint.children(".update-btn").click(function () {
     $(".updateForm").show();
     $(".updateForm").attr("target", id);
     $("#updateHint").val(hint);
+    $("#updateHint2").val(hint2);
     $("#updateName").val(name);
   });
   theHint.show();
   theHint.attr("id", id);
   updateOutput();
 }
-function updateToList(name, hint, email, id) {
+function updateToList(name, hint, hint2, email, id) {
   let theHint = $("#" + id);
   theHint.children(".hint").text(hint);
+  theHint.children(".hint2").text(hint2);
   theHint.children(".email").text(email);
   theHint.children(".name").text(name);
   updateOutput();
@@ -97,11 +113,23 @@ function showList(idList) {
         .then((snap) => {
           let element = snap.data();
           console.log(element);
-          addToList(element.codename, element.hint, element.email, id);
+          addToList(
+            element.codename,
+            element.hint,
+            element.hint2,
+            element.email,
+            id
+          );
           docRef.doc(id).onSnapshot(function (data) {
             let element = data.data();
             console.log(element);
-            updateToList(element.codename, element.hint, element.email, id);
+            updateToList(
+              element.codename,
+              element.hint,
+              element.hint2,
+              element.email,
+              id
+            );
           });
         })
         .catch((err) => {
@@ -179,11 +207,13 @@ $(document).ready(function () {
   $(".submitUpdateHintForm").click(function () {
     $(".updateForm").hide();
     let hint = $("#updateHint").val();
+    let hint2 = $("#updateHint").val();
     let name = $("#updateName").val();
     let id = $(".updateForm").attr("target");
     //console.log(hint, name, id);
     db.collection("hint").doc(id).update({
       hint: hint,
+      hint2: hint2,
       codename: name,
     });
   });
@@ -203,8 +233,9 @@ $(document).ready(function () {
         let id = snapshot.data().id;
         // showList(all_id);
         let hint = $("#myHint").val();
+        let hint2 = $("#myHint2").val();
         let codename = $("#myName").val();
-        if (hint === "") {
+        if (hint === "" || hint2 === "") {
           alert("Hint can not be empty");
         } else {
           docRef
@@ -213,6 +244,7 @@ $(document).ready(function () {
               email: "",
               hasChosen: false,
               hint: hint,
+              hint2: hint2,
             })
             .then(function (snap) {
               all_id.push(snap.id);
