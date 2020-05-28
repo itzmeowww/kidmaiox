@@ -73,6 +73,7 @@ function addToList(name, hint, hint2, email, id) {
                 hasHint: false,
                 hasHint2: false,
                 hintId: "",
+                pickHint2: false,
               });
             });
         });
@@ -207,9 +208,18 @@ $(document).ready(function () {
   $(".submitUpdateHintForm").click(function () {
     $(".updateForm").hide();
     let hint = $("#updateHint").val();
-    let hint2 = $("#updateHint").val();
+    let hint2 = $("#updateHint2").val();
     let name = $("#updateName").val();
     let id = $(".updateForm").attr("target");
+    let theHint = $("#" + id);
+    theHint.children(".update-btn").click(function () {
+      $(".updateForm").show();
+      $(".updateForm").attr("target", id);
+      $("#updateHint").val(hint);
+      $("#updateHint2").val(hint2);
+      $("#updateName").val(name);
+    });
+
     //console.log(hint, name, id);
     db.collection("hint").doc(id).update({
       hint: hint,

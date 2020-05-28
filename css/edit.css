@@ -52,7 +52,7 @@ body {
 }
 .hintList {
   position: relative;
-  width: 500px;
+  width: 800px;
   max-width: calc(100vw - 10px);
   display: flex;
   flex-direction: column;
@@ -63,7 +63,8 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
-.hint {
+.hint,
+.hint2 {
   width: 200px;
   max-width: 30vw;
   font-size: 16px;

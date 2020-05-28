@@ -25,7 +25,7 @@ function createUser(uid, username, email) {
     hasHint: false,
     hintId: "",
     hasHint2: false,
-    pickHInt2: false,
+    pickHint2: false,
   });
 }
 
@@ -38,11 +38,6 @@ function setUserHint(uid, hintId) {
   if (luck <= 3) {
     updates["users/" + uid + "/hasHint2"] = true;
   }
-  database.ref().update(updates);
-}
-function setUserHint2(uid) {
-  let updates = {};
-  updates["users/" + uid + "/hasHint2"] = true;
   database.ref().update(updates);
 }
 
@@ -83,6 +78,26 @@ function showHint(id) {
   $(".hint").show();
 }
 
+function showHint2(id) {
+  db.collection("hint")
+    .doc(id)
+    .onSnapshot(function (doc) {
+      let myHint = doc.data();
+      $(".hint2").text(myHint.hint2);
+    });
+  db.collection("hint")
+    .doc(id)
+    .get()
+    .then((snap) => {
+      let myHint = snap.data();
+      // console.log("showHint : myHint", myHint);
+      $(".hint2").text(myHint.hint2);
+    })
+    .catch((err) => {
+      console.log("From showHint2", err);
+    });
+  $(".hint2").show();
+}
 function giveHint() {
   var docRef = db.collection("hint").doc("list");
   let uid = firebase.auth().currentUser.uid;
@@ -141,6 +156,18 @@ function giveHint() {
           });
       }
     });
+}
+
+function giveHint2(id, show) {
+  $(".brew-pot-container").show();
+  database.ref("users/" + firebase.auth().currentUser.uid).update({
+    pickHint2: true,
+  });
+  setTimeout(() => {
+    $(".brew-pot-container").hide();
+  }, 5000);
+
+  if (show) showHint2(id);
 }
 
 function addQueue() {
@@ -205,6 +232,15 @@ function init() {
       } else {
         if (snapshot.val().hasHint) {
           showHint(snapshot.val().hintId);
+          if (snapshot.val().pickHint2 == true) {
+            if (snapshot.val().hasHint2) showHint2(snapshot.val().hintId);
+          } else {
+            $("#hint2-btn").show();
+            $("#hint2-btn").click(function () {
+              $("#hint2-btn").hide();
+              giveHint2(snapshot.val().hintId, snapshot.val().hasHint2);
+            });
+          }
         } else {
           ready();
         }

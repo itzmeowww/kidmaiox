@@ -46,7 +46,8 @@ body {
   transition: all 0.5s;
 }
 
-#hint-btn {
+#hint-btn,
+#hint2-btn {
   border-radius: 10px;
   background-color: snow;
   color: black;
@@ -57,18 +58,22 @@ body {
   margin-top: 30px;
   transition: all 0.5s;
 }
-#hint-btn:hover {
+#hint-btn:hover,
+#hint2-btn:hover {
   color: red;
   transition: all 0.5s;
 }
-.hint {
+.hint,
+.hint2 {
   text-align: center;
   color: white;
   font-size: 30px;
   transition: all 0.5s;
   padding-bottom: 20px;
 }
-.hint:hover {
+
+.hint:hover,
+.hint2:hover {
   color: red;
   transition: all 0.5s;
 }
