@@ -165,10 +165,9 @@ function giveHint2(id, show) {
   });
   setTimeout(() => {
     $(".brew-pot-container").hide();
+    if (show) showHint2(id);
+    else alert(": (");
   }, 5000);
-
-  if (show) showHint2(id);
-  else alert(": (");
 }
 
 function addQueue() {
