@@ -55,9 +55,9 @@ body {
 
 .signOut-btn {
   float: right;
-  margin-right: 20px;
+  margin-right: 15px;
   border-radius: 10px;
-  font-size: 30px;
+  font-size: 16px;
   font-weight: bold;
   font-family: "Open Sans", sans-serif;
   font-size: 16px;
@@ -125,7 +125,7 @@ body {
   color: #e1ad01;
   font-weight: bold;
   position: absolute;
-  top: 30px;
+  top: 60px;
 }
 @media screen and (min-width: 0) {
   .desc {
@@ -175,7 +175,8 @@ body {
   transition: all 1s;
 }
 
-.brew-pot-container {
+.brew-pot-container,
+.ghost-container {
   width: 100vw;
   height: 100vh;
   display: flex;

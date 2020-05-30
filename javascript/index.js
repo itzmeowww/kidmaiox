@@ -166,7 +166,12 @@ function giveHint2(id, show) {
   setTimeout(() => {
     $(".brew-pot-container").hide();
     if (show) showHint2(id);
-    else alert(": (");
+    else {
+      $(".ghost-container").show();
+      setTimeout(() => {
+        $(".ghost-container").hide();
+      }, 3000);
+    }
   }, 5000);
 }
 
