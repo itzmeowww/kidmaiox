@@ -170,26 +170,34 @@ function init() {
       alert("Sorry, You can not access this section");
     });
 }
-
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+firebase.auth().onAuthStateChanged((user) => {
+  lastAuth(user);
+});
+function lastAuth(user) {
+  if (user) {
+    $(".signIn-btn").hide();
+    $(".hintList").show();
+    $(".signOut-container").show();
+    $(".signOut-btn").click(function () {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          // alert("Sign out");
+          window.location.reload();
+          //firebase.auth().signInWithRedirect(provider);
+        });
+    });
+    init();
+  } else {
+    $(".signIn-btn").text("Sign Me In");
+  }
+}
 firebase
   .auth()
   .getRedirectResult()
-  .then(function (result) {
-    if (result.credential) {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      var token = result.credential.accessToken;
-      // ...
-    }
-    // The signed-in user info.
-    var user = result.user;
-    if (user) {
-      $(".signIn-btn").hide();
-      $(".hintList").show();
-      init();
-    } else {
-      $(".signIn-btn").text("Sign Me In");
-    }
-  })
+  .then(function (result) {})
   .catch(function (error) {
     // Handle Errors here.
     var errorCode = error.code;
@@ -201,6 +209,7 @@ firebase
     // ...
     console.log(error);
   });
+
 $(document).ready(function () {
   $(".closeUpdateForm").click(function () {
     $(".updateForm").hide();

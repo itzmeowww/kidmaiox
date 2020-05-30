@@ -36,6 +36,33 @@ body {
   color: purple;
   transition: all 0.5s;
 }
+
+.signOut-container {
+  top: 10px;
+  position: absolute;
+  z-index: 1;
+  width: 100vw;
+}
+
+.signOut-btn {
+  float: right;
+  margin-right: 20px;
+  border-radius: 10px;
+  font-size: 30px;
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  background-color: snow;
+  color: black;
+  border: black;
+  padding: 10px;
+  transition: all 0.5s;
+}
+.signOut-btn:hover {
+  /* background-color: lightblue; */
+  color: red;
+  transition: all 0.5s;
+}
 .hintContainer {
   border-radius: 10px;
   padding: 5px;
