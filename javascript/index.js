@@ -252,43 +252,49 @@ function init() {
     });
 }
 
+function lastAuth(user) {
+  if (user) {
+    let email = user.email;
+    $(".signIn-btn").hide();
+    if (
+      email.split("@")[1] === "mail.kmutt.ac.th" ||
+      (DEBUG && email.split("@")[1] === "promma.ac.th")
+    ) {
+      $(".signOut-container").show();
+      $(".signOut-btn").click(function () {
+        firebase
+          .auth()
+          .signOut()
+          .then(() => {
+            // alert("Sign out");
+            window.location.reload();
+            //firebase.auth().signInWithRedirect(provider);
+          });
+      });
+      init();
+    } else {
+      $(".signIn-btn").show();
+      $(".signIn-btn").text("Click Me Now");
+      alert("Please use email with @mail.kmutt.ac.th");
+    }
+  } else {
+    $(".signIn-btn").text("Click Me Now");
+  }
+}
+
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+firebase.auth().onAuthStateChanged((user) => {
+  lastAuth(user);
+});
+
 firebase
   .auth()
   .getRedirectResult()
   .then(function (result) {
-    if (result.credential) {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      var token = result.credential.accessToken;
-      // ...
-    }
-    // The signed-in user info.
     var user = result.user;
-    if (user) {
-      let email = user.email;
-      $(".signIn-btn").hide();
-      if (
-        email.split("@")[1] === "mail.kmutt.ac.th" ||
-        (DEBUG && email.split("@")[1] === "promma.ac.th")
-      ) {
-        init();
-      } else {
-        $(".signIn-btn").show();
-        $(".signIn-btn").text("Click Me Now");
-        alert("Please use email with @mail.kmutt.ac.th");
-      }
-    } else {
-      $(".signIn-btn").text("Click Me Now");
-    }
+    //lastAuth(user);
   })
   .catch(function (error) {
-    // Handle Errors here.
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    // The email of the user's account used.
-    var email = error.email;
-    // The firebase.auth.AuthCredential type that was used.
-    var credential = error.credential;
-    // ...
     console.log(error);
   });
 
