@@ -53,7 +53,7 @@ function addToList(name, hint, hint2, email, email2, id) {
         .get()
         .then((snap) => {
           let uid = snap.data().uid;
-          let uid2 = snap.data().uid;
+          let uid2 = snap.data().uid2;
           db.collection("hint")
             .doc("list")
             .get()
