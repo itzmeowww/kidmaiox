@@ -147,7 +147,7 @@ let giveHint = function () {
             let hintId = snapshot.data().id;
             let hintId2 = snapshot.data().id2;
             let two = false;
-            if (hintId.length == 0 || status == "KOSEN") two = true;
+            if (status == "KOSEN") two = true;
 
             let myId = getHintId(hintId, hintId2, two);
             if (myId == null) {
