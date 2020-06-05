@@ -51,7 +51,7 @@ function addToList(name, hint, hint2, email, id) {
         .then((snap) => {
           let uid = snap.data().uid;
 
-          console.log("DEL", uid, uid2);
+          console.log("DEL", uid);
           db.collection("hint")
             .doc("list")
             .get()
@@ -63,12 +63,18 @@ function addToList(name, hint, hint2, email, id) {
                   updateOutput();
                 });
               let idList = snap.data().id;
-
+              let idList2 = snap.data().id2;
               let all_id = snap.data().all_id;
               let index = idList.indexOf(id);
 
               if (index > -1) {
                 idList.splice(index, 1);
+              }
+
+              index = idList2.indexOf(id);
+
+              if (index > -1) {
+                idList2.splice(index, 1);
               }
 
               index = all_id.indexOf(id);
