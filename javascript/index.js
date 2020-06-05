@@ -33,8 +33,16 @@ let createUser = function (uid, username, email, status) {
 let getStatus = function () {
   let status = prompt("Tell me your class (E,S,C,K)", "");
 
-  if (status == "E" || status == "S" || status == "C") return "ESC";
-  else if (status == "K") return "KOSEN";
+  if (
+    status == "E" ||
+    status == "S" ||
+    status == "C" ||
+    status == "e" ||
+    status == "s" ||
+    status == "c"
+  )
+    return "ESC";
+  else if (status == "K" || status == "k") return "KOSEN";
   else return getStatus();
 };
 
