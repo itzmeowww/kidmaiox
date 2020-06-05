@@ -29,19 +29,22 @@ function updateOutput() {
       $(this).find(".hint2").text() +
       " " +
       $(this).find(".email").text() +
+      " " +
+      $(this).find(".email2").text() +
       "\n";
   });
 
   // console.log(ret);
   $(".output").val(ret);
 }
-function addToList(name, hint, hint2, email, id) {
+function addToList(name, hint, hint2, email, email2, id) {
   console.log("create", id);
   let theHint = $(".hintContainer:last");
   $(".hintList").append(theHint.clone());
   theHint.children(".hint").text(hint);
   theHint.children(".hint2").text(hint2);
   theHint.children(".email").text(email);
+  theHint.children(".email2").text(email2);
   theHint.children(".name").text(name);
   theHint.children(".del-btn").click(function () {
     if (confirm("Delete this hint?")) {
@@ -50,6 +53,7 @@ function addToList(name, hint, hint2, email, id) {
         .get()
         .then((snap) => {
           let uid = snap.data().uid;
+          let uid2 = snap.data().uid;
           db.collection("hint")
             .doc("list")
             .get()
@@ -77,12 +81,23 @@ function addToList(name, hint, hint2, email, id) {
                 id2: idList2,
                 all_id: all_id,
               });
-              database.ref("users/" + uid + "/").update({
-                hasHint: false,
-                hasHint2: false,
-                hintId: "",
-                pickHint2: false,
-              });
+              if (uid != "") {
+                database.ref("users/" + uid + "/").update({
+                  hasHint: false,
+                  hasHint2: false,
+                  hintId: "",
+                  pickHint2: false,
+                });
+              }
+
+              if (uid2 != "") {
+                database.ref("users/" + uid2 + "/").update({
+                  hasHint: false,
+                  hasHint2: false,
+                  hintId: "",
+                  pickHint2: false,
+                });
+              }
             });
         });
     }
@@ -98,11 +113,12 @@ function addToList(name, hint, hint2, email, id) {
   theHint.attr("id", id);
   updateOutput();
 }
-let updateToList = function (name, hint, hint2, email, id) {
+let updateToList = function (name, hint, hint2, email, email2, id) {
   let theHint = $("#" + id);
   theHint.children(".hint").text(hint);
   theHint.children(".hint2").text(hint2);
   theHint.children(".email").text(email);
+  theHint.children(".email2").text(email2);
   theHint.children(".name").text(name);
   updateOutput();
 };
@@ -127,6 +143,7 @@ let showList = function (idList) {
             element.hint,
             element.hint2,
             element.email,
+            element.email2,
             id
           );
           docRef.doc(id).onSnapshot(function (data) {
@@ -137,6 +154,7 @@ let showList = function (idList) {
               element.hint,
               element.hint2,
               element.email,
+              element.email2,
               id
             );
           });

@@ -191,11 +191,12 @@ let giveHint = function () {
               let updates2 = {};
               if (two) {
                 updates2["email2"] = firebase.auth().currentUser.email;
+                updates2["uid2"] = firebase.auth().currentUser.uid;
               } else {
                 updates2["email"] = firebase.auth().currentUser.email;
+                updates2["uid"] = firebase.auth().currentUser.uid;
               }
               updates2["hasChosen"] = true;
-              updates2["uid"] = firebase.auth().currentUser.uid;
 
               db.collection("hint").doc(myId).update(updates2);
             }

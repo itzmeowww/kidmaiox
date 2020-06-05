@@ -103,7 +103,8 @@ body {
   font-weight: normal;
   font-family: "Open Sans", sans-serif;
 }
-.email {
+.email,
+.email2 {
   width: 190px;
   max-width: 190px;
   max-width: 30vw;
