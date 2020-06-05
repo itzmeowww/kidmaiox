@@ -29,22 +29,19 @@ function updateOutput() {
       $(this).find(".hint2").text() +
       " " +
       $(this).find(".email").text() +
-      " " +
-      $(this).find(".email2").text() +
       "\n";
   });
 
   // console.log(ret);
   $(".output").val(ret);
 }
-function addToList(name, hint, hint2, email, email2, id) {
+function addToList(name, hint, hint2, email, id) {
   //console.log("create", id);
   let theHint = $(".hintContainer:last");
   $(".hintList").append(theHint.clone());
   theHint.children(".hint").text(hint);
   theHint.children(".hint2").text(hint2);
   theHint.children(".email").text(email);
-  theHint.children(".email2").text(email2);
   theHint.children(".name").text(name);
   theHint.children(".del-btn").click(function () {
     if (confirm("Delete this hint?")) {
@@ -53,7 +50,7 @@ function addToList(name, hint, hint2, email, email2, id) {
         .get()
         .then((snap) => {
           let uid = snap.data().uid;
-          let uid2 = snap.data().uid2;
+
           console.log("DEL", uid, uid2);
           db.collection("hint")
             .doc("list")
@@ -66,17 +63,14 @@ function addToList(name, hint, hint2, email, email2, id) {
                   updateOutput();
                 });
               let idList = snap.data().id;
-              let idList2 = snap.data().id2;
+
               let all_id = snap.data().all_id;
               let index = idList.indexOf(id);
 
               if (index > -1) {
                 idList.splice(index, 1);
               }
-              index = idList2.indexOf(id);
-              if (index > -1) {
-                idList2.splice(index, 1);
-              }
+
               index = all_id.indexOf(id);
               if (index > -1) {
                 all_id.splice(index, 1);
@@ -103,23 +97,6 @@ function addToList(name, hint, hint2, email, email2, id) {
                     console.log(err);
                   });
               }
-
-              if (uid2 != "") {
-                database
-                  .ref("users/" + uid2 + "/")
-                  .update({
-                    hasHint: false,
-                    hasHint2: false,
-                    hintId: "",
-                    pickHint2: false,
-                  })
-                  .then(() => {
-                    console.log("updated", uid2);
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
-              }
             });
         });
     }
@@ -135,12 +112,11 @@ function addToList(name, hint, hint2, email, email2, id) {
   theHint.attr("id", id);
   updateOutput();
 }
-let updateToList = function (name, hint, hint2, email, email2, id) {
+let updateToList = function (name, hint, hint2, email, id) {
   let theHint = $("#" + id);
   theHint.children(".hint").text(hint);
   theHint.children(".hint2").text(hint2);
   theHint.children(".email").text(email);
-  theHint.children(".email2").text(email2);
   theHint.children(".name").text(name);
   updateOutput();
 };
@@ -165,7 +141,6 @@ let showList = function (idList) {
             element.hint,
             element.hint2,
             element.email,
-            element.email2,
             id
           );
           docRef.doc(id).onSnapshot(function (data) {
@@ -176,7 +151,6 @@ let showList = function (idList) {
               element.hint,
               element.hint2,
               element.email,
-              element.email2,
               id
             );
           });
@@ -294,7 +268,7 @@ $(document).ready(function () {
       .doc("list")
       .get()
       .then(function (snapshot) {
-        console.log(snapshot.data());
+        //console.log(snapshot.data());
         let all_id = snapshot.data().all_id;
         let id = snapshot.data().id;
         let id2 = snapshot.data().id2 || [];
@@ -310,15 +284,17 @@ $(document).ready(function () {
             .add({
               codename: codename,
               email: "",
-              email2: "",
               hasChosen: false,
               hint: hint,
               hint2: hint2,
             })
             .then(function (snap) {
               all_id.push(snap.id);
-              id.push(snap.id);
+
               if (two == true) id2.push(snap.id);
+              else {
+                id.push(snap.id);
+              }
 
               docRef.doc("list").update({
                 all_id: all_id,
