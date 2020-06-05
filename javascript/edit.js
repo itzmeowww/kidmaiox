@@ -48,6 +48,7 @@ function addToList(name, hint, hint2, email, email2, id) {
   theHint.children(".name").text(name);
   theHint.children(".del-btn").click(function () {
     if (confirm("Delete this hint?")) {
+      updateOutput();
       db.collection("hint")
         .doc(id)
         .get()
