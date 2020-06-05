@@ -1,6 +1,6 @@
 let DEBUG = true;
 // Your web app's Firebase configuration
-var firebaseConfig = {
+let firebaseConfig = {
   apiKey: "AIzaSyAtjH1QQ6gf6eiTwbhpgPsd6_l3xvEeDjY",
   authDomain: "esccode.firebaseapp.com",
   databaseURL: "https://esccode.firebaseio.com",
@@ -13,11 +13,11 @@ var firebaseConfig = {
 // Initialize Firebase
 
 firebase.initializeApp(firebaseConfig);
-var provider = new firebase.auth.GoogleAuthProvider();
-var database = firebase.database();
-var db = firebase.firestore();
+let provider = new firebase.auth.GoogleAuthProvider();
+let database = firebase.database();
+let db = firebase.firestore();
 
-function createUser(uid, username, email) {
+let createUser = function (uid, username, email, status) {
   database.ref("users/" + uid).set({
     codename: "",
     username: username,
@@ -26,10 +26,19 @@ function createUser(uid, username, email) {
     hintId: "",
     hasHint2: false,
     pickHint2: false,
+    status: status,
   });
-}
+};
 
-function setUserHint(uid, hintId) {
+let getStatus = function () {
+  let status = prompt("Tell me your class (E,S,C,K)", "");
+
+  if (status == "E" || status == "S" || status == "C") return "ESC";
+  else if (status == "K") return "KOSEN";
+  else return getStatus();
+};
+
+let setUserHint = function (uid, hintId) {
   let updates = {};
   updates["users/" + uid + "/hintId"] = hintId;
   updates["users/" + uid + "/hasHint"] = true;
@@ -39,23 +48,36 @@ function setUserHint(uid, hintId) {
     updates["users/" + uid + "/hasHint2"] = true;
   }
   database.ref().update(updates);
-}
+};
 
-function getHintId(hintId) {
-  if (hintId.length == 0) {
+let getHintId = function (hintId, hintId2, two) {
+  if (two) {
+    if (hintId2.length == 0) {
+      $("#hint-btn").hide();
+      return null;
+    }
+    $("#hint-btn").text("Pairing");
+    let id;
+    id = hintId2[Math.floor(Math.random() * hintId2.length)];
     $("#hint-btn").hide();
-    return null;
+    return id;
+  } else {
+    if (hintId.length == 0) {
+      $("#hint-btn").hide();
+      return null;
+    }
+    $("#hint-btn").text("Pairing");
+    let id;
+    id = hintId[Math.floor(Math.random() * hintId.length)];
+    $("#hint-btn").hide();
+    return id;
   }
-  $("#hint-btn").text("Pairing");
-  let id;
-  id = hintId[Math.floor(Math.random() * hintId.length)];
-  $("#hint-btn").hide();
-  return id;
-}
+};
+
 let queueTime = null;
 let queueId;
 
-function showHint(id) {
+let showHint = function (id) {
   db.collection("hint")
     .doc(id)
     .onSnapshot(function (doc) {
@@ -76,9 +98,9 @@ function showHint(id) {
       console.log("From showHint", err);
     });
   $(".hint").show();
-}
+};
 
-function showHint2(id) {
+let showHint2 = function (id) {
   db.collection("hint")
     .doc(id)
     .onSnapshot(function (doc) {
@@ -97,8 +119,8 @@ function showHint2(id) {
       console.log("From showHint2", err);
     });
   $(".hint2").show();
-}
-function giveHint() {
+};
+let giveHint = function () {
   var docRef = db.collection("hint").doc("list");
   let uid = firebase.auth().currentUser.uid;
   firebase
@@ -106,6 +128,8 @@ function giveHint() {
     .ref("/users/" + uid)
     .once("value")
     .then(function (snapshot) {
+      let status = snapshot.val().status;
+
       if (snapshot.val().hasHint) {
         showHint(snapshot.val().hintId);
       } else {
@@ -113,7 +137,11 @@ function giveHint() {
           .get()
           .then(function (snapshot) {
             let hintId = snapshot.data().id;
-            let myId = getHintId(hintId);
+            let hintId2 = snapshot.data().id2;
+            let two = false;
+            if (hintId.length == 0 || status == "KOSEN") two = true;
+
+            let myId = getHintId(hintId, hintId2, two);
             if (myId == null) {
               try {
                 var q = db.collection("queue");
@@ -125,13 +153,22 @@ function giveHint() {
               $(".hint").hide();
               $(".codename").hide();
             } else {
-              //console.log("Your Id ", myId);
-              const index = hintId.indexOf(myId);
-              if (index > -1) {
-                hintId.splice(index, 1);
-              }
               let updates = {};
-              updates["id"] = hintId;
+
+              if (two) {
+                const index = hintId2.indexOf(myId);
+                if (index > -1) {
+                  hintId2.splice(index, 1);
+                }
+                updates["id2"] = hintId2;
+              } else {
+                const index = hintId.indexOf(myId);
+                if (index > -1) {
+                  hintId.splice(index, 1);
+                }
+                updates["id"] = hintId;
+              }
+
               docRef.update(updates).then(function () {
                 var q = db.collection("queue");
                 q.doc(queueId).delete();
@@ -143,12 +180,16 @@ function giveHint() {
               }, 5000);
 
               showHint(myId);
+              let updates2 = {};
+              if (two) {
+                updates2["email2"] = firebase.auth().currentUser.email;
+              } else {
+                updates2["email"] = firebase.auth().currentUser.email;
+              }
+              updates2["hasChosen"] = true;
+              updates2["uid"] = firebase.auth().currentUser.uid;
 
-              db.collection("hint").doc(myId).update({
-                email: firebase.auth().currentUser.email,
-                hasChosen: true,
-                uid: firebase.auth().currentUser.uid,
-              });
+              db.collection("hint").doc(myId).update(updates2);
             }
           })
           .catch(function (error) {
@@ -156,9 +197,9 @@ function giveHint() {
           });
       }
     });
-}
+};
 
-function giveHint2(id, show) {
+let giveHint2 = function (id, show) {
   $(".brew-pot-container").show();
   database.ref("users/" + firebase.auth().currentUser.uid).update({
     pickHint2: true,
@@ -173,9 +214,9 @@ function giveHint2(id, show) {
       }, 3000);
     }
   }, 5000);
-}
+};
 
-function addQueue() {
+let addQueue = function () {
   window.onbeforeunload = function (event) {
     try {
       var q = db.collection("queue");
@@ -206,17 +247,17 @@ function addQueue() {
 
     // checkQueue(doc.data());
   });
-}
+};
 
-function ready() {
+let ready = function () {
   $(".hint").hide();
   $("#hint-btn").show();
   $("#hint-btn").click(function () {
     $("#hint-btn").text("Pairing");
     if (queueTime == null) addQueue();
   });
-}
-function init() {
+};
+let init = function () {
   $(".intro").hide();
   $(".name-text").show();
   $(".title").show();
@@ -232,7 +273,8 @@ function init() {
       //console.log(snapshot.val());
       var email = snapshot.val() && snapshot.val().email;
       if (email === null) {
-        createUser(user.uid, user.displayName, user.email);
+        let status = getStatus();
+        createUser(user.uid, user.displayName, user.email, status);
         ready();
       } else {
         if (snapshot.val().hasHint) {
@@ -255,9 +297,9 @@ function init() {
       console.log(err);
       alert("Please use email with @mail.kmutt.ac.th");
     });
-}
+};
 
-function lastAuth(user) {
+let lastAuth = function (user) {
   if (user) {
     let email = user.email;
     $(".signIn-btn").hide();
@@ -285,7 +327,7 @@ function lastAuth(user) {
   } else {
     $(".signIn-btn").text("Click Me Now");
   }
-}
+};
 
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 firebase.auth().onAuthStateChanged((user) => {

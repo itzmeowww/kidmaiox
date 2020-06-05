@@ -1,6 +1,6 @@
 let DEBUG = true;
 // Your web app's Firebase configuration
-var firebaseConfig = {
+let firebaseConfig = {
   apiKey: "AIzaSyAtjH1QQ6gf6eiTwbhpgPsd6_l3xvEeDjY",
   authDomain: "esccode.firebaseapp.com",
   databaseURL: "https://esccode.firebaseio.com",
@@ -56,17 +56,25 @@ function addToList(name, hint, hint2, email, id) {
             .then((snap) => {
               db.collection("hint").doc(id).delete();
               let idList = snap.data().id;
+              let idList2 = snap.data().id2;
               let all_id = snap.data().all_id;
               let index = idList.indexOf(id);
+
               if (index > -1) {
                 idList.splice(index, 1);
+              }
+              index = idList2.indexOf(id);
+              if (index > -1) {
+                idList2.splice(index, 1);
               }
               index = all_id.indexOf(id);
               if (index > -1) {
                 all_id.splice(index, 1);
               }
+
               db.collection("hint").doc("list").update({
                 id: idList,
+                id2: idList2,
                 all_id: all_id,
               });
               database.ref("users/" + uid + "/").update({
@@ -90,15 +98,15 @@ function addToList(name, hint, hint2, email, id) {
   theHint.attr("id", id);
   updateOutput();
 }
-function updateToList(name, hint, hint2, email, id) {
+let updateToList = function (name, hint, hint2, email, id) {
   let theHint = $("#" + id);
   theHint.children(".hint").text(hint);
   theHint.children(".hint2").text(hint2);
   theHint.children(".email").text(email);
   theHint.children(".name").text(name);
   updateOutput();
-}
-function showList(idList) {
+};
+let showList = function (idList) {
   console.log(idList);
   let theHint = $(".hintContainer:last").clone();
   $(".hintList").empty();
@@ -138,8 +146,8 @@ function showList(idList) {
         });
     }
   });
-}
-function init() {
+};
+let init = function () {
   var docRef = db.collection("hint");
   var keyRef = db.collection("secret").doc("keys");
 
@@ -163,18 +171,17 @@ function init() {
         })
         .catch(function (error) {
           alert("Sorry, you do not have permission");
-          console.log("Error getting document:", error);
         });
     })
     .catch((err) => {
       alert("Sorry, You can not access this section");
     });
-}
+};
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 firebase.auth().onAuthStateChanged((user) => {
   lastAuth(user);
 });
-function lastAuth(user) {
+let lastAuth = function (user) {
   if (user) {
     $(".signIn-btn").hide();
     $(".hintList").show();
@@ -193,7 +200,7 @@ function lastAuth(user) {
   } else {
     $(".signIn-btn").text("Sign Me In");
   }
-}
+};
 firebase
   .auth()
   .getRedirectResult()
@@ -250,7 +257,9 @@ $(document).ready(function () {
         console.log(snapshot.data());
         let all_id = snapshot.data().all_id;
         let id = snapshot.data().id;
+        let id2 = snapshot.data().id2 || [];
         // showList(all_id);
+        let two = $("#two").prop("checked");
         let hint = $("#myHint").val();
         let hint2 = $("#myHint2").val();
         let codename = $("#myName").val();
@@ -261,6 +270,7 @@ $(document).ready(function () {
             .add({
               codename: codename,
               email: "",
+              email2: "",
               hasChosen: false,
               hint: hint,
               hint2: hint2,
@@ -268,9 +278,12 @@ $(document).ready(function () {
             .then(function (snap) {
               all_id.push(snap.id);
               id.push(snap.id);
+              if (two == true) id2.push(snap.id);
+
               docRef.doc("list").update({
                 all_id: all_id,
                 id: id,
+                id2: id2,
               });
             })
             .catch((err) => console.log(err));
