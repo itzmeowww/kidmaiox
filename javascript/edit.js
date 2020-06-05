@@ -38,7 +38,7 @@ function updateOutput() {
   $(".output").val(ret);
 }
 function addToList(name, hint, hint2, email, email2, id) {
-  console.log("create", id);
+  //console.log("create", id);
   let theHint = $(".hintContainer:last");
   $(".hintList").append(theHint.clone());
   theHint.children(".hint").text(hint);
@@ -48,18 +48,23 @@ function addToList(name, hint, hint2, email, email2, id) {
   theHint.children(".name").text(name);
   theHint.children(".del-btn").click(function () {
     if (confirm("Delete this hint?")) {
-      updateOutput();
       db.collection("hint")
         .doc(id)
         .get()
         .then((snap) => {
           let uid = snap.data().uid;
           let uid2 = snap.data().uid2;
+          console.log("DEL", uid, uid2);
           db.collection("hint")
             .doc("list")
             .get()
             .then((snap) => {
-              db.collection("hint").doc(id).delete();
+              db.collection("hint")
+                .doc(id)
+                .delete()
+                .then(() => {
+                  updateOutput();
+                });
               let idList = snap.data().id;
               let idList2 = snap.data().id2;
               let all_id = snap.data().all_id;
@@ -83,21 +88,37 @@ function addToList(name, hint, hint2, email, email2, id) {
                 all_id: all_id,
               });
               if (uid != "") {
-                database.ref("users/" + uid + "/").update({
-                  hasHint: false,
-                  hasHint2: false,
-                  hintId: "",
-                  pickHint2: false,
-                });
+                database
+                  .ref("users/" + uid + "/")
+                  .update({
+                    hasHint: false,
+                    hasHint2: false,
+                    hintId: "",
+                    pickHint2: false,
+                  })
+                  .then(() => {
+                    console.log("updated", uid);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
               }
 
               if (uid2 != "") {
-                database.ref("users/" + uid2 + "/").update({
-                  hasHint: false,
-                  hasHint2: false,
-                  hintId: "",
-                  pickHint2: false,
-                });
+                database
+                  .ref("users/" + uid2 + "/")
+                  .update({
+                    hasHint: false,
+                    hasHint2: false,
+                    hintId: "",
+                    pickHint2: false,
+                  })
+                  .then(() => {
+                    console.log("updated", uid2);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
               }
             });
         });
@@ -124,7 +145,7 @@ let updateToList = function (name, hint, hint2, email, email2, id) {
   updateOutput();
 };
 let showList = function (idList) {
-  console.log(idList);
+  //console.log(idList);
   let theHint = $(".hintContainer:last").clone();
   $(".hintList").empty();
   $(".hintList").append(theHint);
@@ -138,7 +159,7 @@ let showList = function (idList) {
         .get()
         .then((snap) => {
           let element = snap.data();
-          console.log(element);
+          //console.log(element);
           addToList(
             element.codename,
             element.hint,
@@ -149,7 +170,7 @@ let showList = function (idList) {
           );
           docRef.doc(id).onSnapshot(function (data) {
             let element = data.data();
-            console.log(element);
+            //console.log(element);
             updateToList(
               element.codename,
               element.hint,
