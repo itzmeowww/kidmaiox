@@ -215,9 +215,6 @@ let giveHint2 = function (id, show) {
     if (show) showHint2(id);
     else {
       $(".ghost-container").show();
-      setTimeout(() => {
-        $(".ghost-container").hide();
-      }, 3000);
     }
   }, 5000);
 };
@@ -357,6 +354,9 @@ $(document).ready(function () {
   $(".desc").hide();
   $(".title").hide();
   $(".name-text").hide();
+  $(".close-ghost").click(() => {
+    $(".ghost-container").hide();
+  });
   $(".signIn-btn").click(function () {
     $(".signIn-btn").text("Loading...");
     firebase.auth().signInWithRedirect(provider);
