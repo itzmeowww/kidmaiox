@@ -37,6 +37,9 @@ let db = firebase.firestore();
 let database = firebase.database();
 
 let theHintList = {};
+let theRealName = {};
+let pendingLoadRealName = 0;
+
 function updateOutput() {
   let ret = "";
   $(".hintContainer").each(function () {
@@ -150,7 +153,15 @@ let updateToList = function (displayName, name, hint, hint2, email, id) {
     email: email,
     id: id,
   };
-
+  pendingLoadRealName++;
+  db.collection("secret")
+    .doc(id)
+    .get()
+    .then((snap) => {
+      let realName = snap.data().realName;
+      theRealName[id] = realName;
+      pendingLoadRealName--;
+    });
   let theHint = $("#" + id);
 
   if (displayName === undefined) displayName = "Not chosen";
@@ -284,8 +295,24 @@ firebase
     console.log(error);
   });
 let save2excel = function () {
+  if (pendingLoadRealName != 0) {
+    alert("Try again soon");
+    return;
+  }
   wb.SheetNames.push("Test Sheet");
-  var ws_data = [["ชื่อ", "ชื่อสาย", "คำใบ้ 1", "คำใบ้ 2", "email"]];
+  var ws_data = [
+    [
+      "ชื่อ",
+      "ชื่อสาย",
+      "คำใบ้ 1",
+      "คำใบ้ 2",
+      "email",
+      "",
+      "",
+      "",
+      "ชื่อพี่รหัส",
+    ],
+  ];
   //write data
 
   for (id in theHintList) {
@@ -295,7 +322,18 @@ let save2excel = function () {
       let hint1 = theHintList[id].hint1;
       let hint2 = theHintList[id].hint2;
       let email = theHintList[id].email;
-      ws_data.push([displayName, codename, hint1, hint2, email]);
+      let realName = theRealName[id];
+      ws_data.push([
+        displayName,
+        codename,
+        hint1,
+        hint2,
+        email,
+        "",
+        "",
+        "",
+        realName,
+      ]);
     }
   }
 
@@ -321,14 +359,18 @@ let handleSubmit = function () {
       // showList(all_id);
       let two = $("#two").prop("checked");
       let hint = $("#myHint").val();
+      let name = $("#myRealName").val();
       let hint2 = $("#myHint2").val();
       let codename = $("#myName").val();
       if (hint === "" || hint2 === "") {
         alert("Hint can not be empty");
+      } else if (name === "") {
+        alert("Name can not be empty");
       } else {
         $("#myHint").val("");
         $("#myHint2").val("");
         $("#myName").val("");
+        $("#myRealName").val("");
 
         docRef
           .add({
@@ -340,6 +382,10 @@ let handleSubmit = function () {
           })
           .then(function (snap) {
             all_id.push(snap.id);
+
+            db.collection("secret").doc(snap.id).set({
+              realName: name,
+            });
 
             if (two == true) id2.push(snap.id);
             else {

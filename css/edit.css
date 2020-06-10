@@ -48,7 +48,7 @@ body {
   font-size: 30px;
   font-weight: bold;
   font-family: "Open Sans", sans-serif;
-  font-size: 16px;
+  font-size: 10px;
   background-color: snow;
   color: black;
   border: black;
@@ -182,6 +182,7 @@ label {
   max-width: 80vw;
 }
 .del-btn {
+  background-color: snow;
   margin-right: 5px;
   margin-left: 5px;
   font-family: "Open Sans", sans-serif;
@@ -195,6 +196,7 @@ label {
 }
 
 .update-btn {
+  background-color: snow;
   font-family: "Open Sans", sans-serif;
   font-weight: normal;
   border: none;

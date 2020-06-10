@@ -90,6 +90,7 @@ let showHint = function (id) {
     .doc(id)
     .onSnapshot(function (doc) {
       let myHint = doc.data();
+      console.log(myHint);
       $(".hint").text(myHint.hint);
       $(".codename").text("- " + myHint.codename + " -");
     });
