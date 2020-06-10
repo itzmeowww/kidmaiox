@@ -16,20 +16,22 @@
     <button class="signIn-btn">
       Loading...
     </button>
-    <div class="updateForm" style="display: none;">
+    <form class="updateForm" style="display: none;">
       <input id="updateHint" type="text" placeholder="Hint" />
       <input id="updateHint2" type="text" placeholder="Hint2" />
       <input id="updateName" type="text" placeholder="Codename" />
       <button class="submitUpdateHintForm">Update</button>
       <button class="closeUpdateForm">Close</button>
-    </div>
+    </form>
     <div class="hintCount"></div>
+
     <div class="hintList">
       <div class="hintContainer" style="display: none;">
+        <div class="displayName"></div>
         <div class="name"></div>
-        <div class="hint"></div>
+        <!-- <div class="hint"></div>
         <div class="hint2"></div>
-        <div class="email"></div>
+        <div class="email"></div> -->
         <button class="del-btn">Delete</button>
         <button class="update-btn">Update</button>
       </div>
@@ -39,15 +41,17 @@
         Log Out
       </button>
     </div>
-    <div class="hintForm" style="display: none;">
+    <form class="hintForm" style="display: none;">
       <input type="checkbox" id="two" name="two" value="two" />
       <label for="two"> For KOSEN</label>
       <input id="myHint" type="text" placeholder="Hint" />
       <input id="myHint2" type="text" placeholder="Hint2" />
       <input id="myName" type="text" placeholder="Codename" />
       <button class="submitHintForm">Submit</button>
-    </div>
-    <textarea class="output" style="display: none;"> </textarea>
+    </form>
+    </br>
+
+    <button id="save-excel" style="display: none;">Save as excel</button>
     <div class="dev">
       Developed by <a href="//itzmeowww.github.io">ItzMeOwww</a> &
       <a href="https://www.facebook.com/tonklatales">TTkonaLL</a>
@@ -62,6 +66,8 @@
       integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
       crossorigin="anonymous"
     ></script>
+    <script src="./javascript/FileSaver.min.js"></script>
+    <script src="./javascript/xlsx.full.min.js"></script>
     <script src="javascript/edit.js"></script>
   </body>
 </html>

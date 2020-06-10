@@ -181,6 +181,7 @@ let giveHint = function () {
                 var q = db.collection("queue");
                 q.doc(queueId).delete();
               });
+
               $(".brew-pot-container").show();
               setUserHint(firebase.auth().currentUser.uid, myId);
               setTimeout(() => {
@@ -192,7 +193,7 @@ let giveHint = function () {
 
               updates2["email"] = firebase.auth().currentUser.email;
               updates2["uid"] = firebase.auth().currentUser.uid;
-
+              updates2["name"] = firebase.auth().currentUser.displayName;
               updates2["hasChosen"] = true;
 
               db.collection("hint").doc(myId).update(updates2);

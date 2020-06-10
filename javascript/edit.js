@@ -1,4 +1,22 @@
 let DEBUG = true;
+
+//workbook
+
+var wb = XLSX.utils.book_new();
+wb.Props = {
+  Title: "ESC x KOSEN",
+
+  Author: "6200313@kvis.ac.th",
+  CreatedDate: new Date(),
+};
+
+function s2ab(s) {
+  var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
+  var view = new Uint8Array(buf); //create uint8array as viewer
+  for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xff; //convert to octet
+  return buf;
+}
+
 // Your web app's Firebase configuration
 let firebaseConfig = {
   apiKey: "AIzaSyAtjH1QQ6gf6eiTwbhpgPsd6_l3xvEeDjY",
@@ -18,6 +36,7 @@ let provider = new firebase.auth.GoogleAuthProvider();
 let db = firebase.firestore();
 let database = firebase.database();
 
+let theHintList = {};
 function updateOutput() {
   let ret = "";
   $(".hintContainer").each(function () {
@@ -35,13 +54,17 @@ function updateOutput() {
   // console.log(ret);
   $(".output").val(ret);
 }
-function addToList(name, hint, hint2, email, id) {
+function addToList(displayName, name, hint, hint2, email, id) {
   //console.log("create", id);
+
   let theHint = $(".hintContainer:last");
   $(".hintList").append(theHint.clone());
-  theHint.children(".hint").text(hint);
-  theHint.children(".hint2").text(hint2);
-  theHint.children(".email").text(email);
+  if (displayName === undefined) displayName = "Not chosen";
+
+  theHint.children(".displayName").text(displayName);
+  // theHint.children(".hint").text(hint);
+  // theHint.children(".hint2").text(hint2);
+  // theHint.children(".email").text(email);
   theHint.children(".name").text(name);
   theHint.children(".del-btn").click(function () {
     if (confirm("Delete this hint?")) {
@@ -118,11 +141,26 @@ function addToList(name, hint, hint2, email, id) {
   theHint.attr("id", id);
   updateOutput();
 }
-let updateToList = function (name, hint, hint2, email, id) {
+let updateToList = function (displayName, name, hint, hint2, email, id) {
+  theHintList[id] = {
+    displayName: displayName,
+    codename: name,
+    hint1: hint,
+    hint2: hint2,
+    email: email,
+    id: id,
+  };
+
   let theHint = $("#" + id);
-  theHint.children(".hint").text(hint);
-  theHint.children(".hint2").text(hint2);
-  theHint.children(".email").text(email);
+
+  if (displayName === undefined) displayName = "Not chosen";
+  else {
+    theHint.addClass("hasChosen");
+  }
+  theHint.children(".displayName").text(displayName);
+  // theHint.children(".hint").text(hint);
+  // theHint.children(".hint2").text(hint2);
+  // theHint.children(".email").text(email);
   theHint.children(".name").text(name);
   updateOutput();
 };
@@ -143,22 +181,30 @@ let showList = function (idList) {
           let element = snap.data();
           //console.log(element);
           addToList(
+            element.name,
             element.codename,
             element.hint,
             element.hint2,
             element.email,
             id
           );
+
           docRef.doc(id).onSnapshot(function (data) {
             let element = data.data();
-            //console.log(element);
-            updateToList(
-              element.codename,
-              element.hint,
-              element.hint2,
-              element.email,
-              id
-            );
+
+            if (element === undefined) {
+              $("#" + id).remove();
+              delete theHintList[id];
+            } else {
+              updateToList(
+                element.name,
+                element.codename,
+                element.hint,
+                element.hint2,
+                element.email,
+                id
+              );
+            }
           });
         })
         .catch((err) => {
@@ -168,6 +214,7 @@ let showList = function (idList) {
   });
 };
 let init = function () {
+  $("#save-excel").show();
   var docRef = db.collection("hint");
   var keyRef = db.collection("secret").doc("keys");
 
@@ -236,85 +283,127 @@ firebase
     // ...
     console.log(error);
   });
+let save2excel = function () {
+  wb.SheetNames.push("Test Sheet");
+  var ws_data = [["ชื่อ", "ชื่อสาย", "คำใบ้ 1", "คำใบ้ 2", "email"]];
+  //write data
 
+  for (id in theHintList) {
+    if (theHintList.hasOwnProperty(id)) {
+      let displayName = theHintList[id].displayName;
+      let codename = theHintList[id].codename;
+      let hint1 = theHintList[id].hint1;
+      let hint2 = theHintList[id].hint2;
+      let email = theHintList[id].email;
+      ws_data.push([displayName, codename, hint1, hint2, email]);
+    }
+  }
+
+  var ws = XLSX.utils.aoa_to_sheet(ws_data);
+  wb.Sheets["Test Sheet"] = ws;
+  var wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
+  saveAs(
+    new Blob([s2ab(wbout)], { type: "application/octet-stream" }),
+    "escnkosen.xlsx"
+  );
+};
+
+let handleSubmit = function () {
+  var docRef = db.collection("hint");
+  docRef
+    .doc("list")
+    .get()
+    .then(function (snapshot) {
+      //console.log(snapshot.data());
+      let all_id = snapshot.data().all_id;
+      let id = snapshot.data().id;
+      let id2 = snapshot.data().id2 || [];
+      // showList(all_id);
+      let two = $("#two").prop("checked");
+      let hint = $("#myHint").val();
+      let hint2 = $("#myHint2").val();
+      let codename = $("#myName").val();
+      if (hint === "" || hint2 === "") {
+        alert("Hint can not be empty");
+      } else {
+        $("#myHint").val("");
+        $("#myHint2").val("");
+        $("#myName").val("");
+
+        docRef
+          .add({
+            codename: codename,
+            email: "",
+            hasChosen: false,
+            hint: hint,
+            hint2: hint2,
+          })
+          .then(function (snap) {
+            all_id.push(snap.id);
+
+            if (two == true) id2.push(snap.id);
+            else {
+              id.push(snap.id);
+            }
+
+            docRef.doc("list").update({
+              all_id: all_id,
+              id: id,
+              id2: id2,
+            });
+          })
+          .catch((err) => console.log(err));
+      }
+      $(".hintForm").show();
+    })
+    .catch(function (error) {
+      alert("Sorry, you do not have permission");
+      console.log("Error getting document:", error);
+    });
+};
+
+let handleUpdate = function () {
+  $(".updateForm").hide();
+  let hint = $("#updateHint").val();
+  let hint2 = $("#updateHint2").val();
+  let name = $("#updateName").val();
+  let id = $(".updateForm").attr("target");
+  let theHint = $("#" + id);
+  theHint.children(".update-btn").click(function () {
+    $(".updateForm").show();
+    $(".updateForm").attr("target", id);
+    $("#updateHint").val(hint);
+    $("#updateHint2").val(hint2);
+    $("#updateName").val(name);
+  });
+
+  //console.log(hint, name, id);
+  db.collection("hint").doc(id).update({
+    hint: hint,
+    hint2: hint2,
+    codename: name,
+  });
+};
 $(document).ready(function () {
   $(".closeUpdateForm").click(function () {
     $(".updateForm").hide();
   });
-  $(".submitUpdateHintForm").click(function () {
-    $(".updateForm").hide();
-    let hint = $("#updateHint").val();
-    let hint2 = $("#updateHint2").val();
-    let name = $("#updateName").val();
-    let id = $(".updateForm").attr("target");
-    let theHint = $("#" + id);
-    theHint.children(".update-btn").click(function () {
-      $(".updateForm").show();
-      $(".updateForm").attr("target", id);
-      $("#updateHint").val(hint);
-      $("#updateHint2").val(hint2);
-      $("#updateName").val(name);
-    });
 
-    //console.log(hint, name, id);
-    db.collection("hint").doc(id).update({
-      hint: hint,
-      hint2: hint2,
-      codename: name,
-    });
+  $("#save-excel").click(function () {
+    save2excel();
   });
+  $(".hintForm").submit(function (e) {
+    handleSubmit();
+    e.preventDefault();
+  });
+
+  $(".updateForm").submit(function (e) {
+    handleUpdate();
+    e.preventDefault();
+  });
+
   $(".hintList").hide();
   $(".signIn-btn").click(function () {
     firebase.auth().signInWithRedirect(provider);
-  });
-
-  $(".submitHintForm").click(function () {
-    var docRef = db.collection("hint");
-    docRef
-      .doc("list")
-      .get()
-      .then(function (snapshot) {
-        //console.log(snapshot.data());
-        let all_id = snapshot.data().all_id;
-        let id = snapshot.data().id;
-        let id2 = snapshot.data().id2 || [];
-        // showList(all_id);
-        let two = $("#two").prop("checked");
-        let hint = $("#myHint").val();
-        let hint2 = $("#myHint2").val();
-        let codename = $("#myName").val();
-        if (hint === "" || hint2 === "") {
-          alert("Hint can not be empty");
-        } else {
-          docRef
-            .add({
-              codename: codename,
-              email: "",
-              hasChosen: false,
-              hint: hint,
-              hint2: hint2,
-            })
-            .then(function (snap) {
-              all_id.push(snap.id);
-
-              if (two == true) id2.push(snap.id);
-              else {
-                id.push(snap.id);
-              }
-
-              docRef.doc("list").update({
-                all_id: all_id,
-                id: id,
-                id2: id2,
-              });
-            })
-            .catch((err) => console.log(err));
-        }
-        $(".hintForm").show();
-      })
-      .catch(function (error) {
-        alert("Sorry, you do not have permission");
-        console.log("Error getting document:", error);
-      });
   });
 });
