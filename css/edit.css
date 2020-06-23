@@ -41,24 +41,32 @@ body {
   max-width: 100%;
 }
 
+.signOut-container {
+  top: 10px;
+  position: absolute;
+  z-index: 1;
+  width: 100vw;
+}
+
 .signOut-btn {
+  width: 35px;
+  height: 35px;
   float: right;
-  margin-right: 20px;
-  border-radius: 10px;
-  font-size: 30px;
-  font-weight: bold;
-  font-family: "Open Sans", sans-serif;
-  font-size: 10px;
+  margin-right: 10px;
+  border-radius: 15px;
+  align-items: center;
+  padding-top: 5px;
+  padding-left: 5px;
   background-color: snow;
   color: black;
   border: black;
-  padding: 10px;
   transition: all 0.5s;
 }
 
 .signOut-btn:hover {
   /* background-color: lightblue; */
-  color: red;
+
+  background-color: lightblue;
   transition: all 0.5s;
 }
 .hintContainer {
@@ -208,7 +216,7 @@ label {
 }
 .updateForm {
   position: fixed;
-  background-color: rgba(128, 128, 128, 0.548);
+  background-color: rgba(128, 128, 128, 0.848);
   top: 0px;
   width: 100vw;
   height: 100vh;
