@@ -95,6 +95,8 @@ html {
   color: white;
   font-size: 30px;
   transition: all 0.5s;
+  white-space: normal;
+  overflow: auto;
 }
 
 .hint:hover {
