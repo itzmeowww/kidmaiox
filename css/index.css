@@ -5,6 +5,7 @@
 }
 * {
   font-family: "nightmare";
+  max-width: 100%;
 }
 
 html {
@@ -19,17 +20,19 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
+
   max-width: 100%;
-  height: 100vh;
 }
 
-body {
+.body-container {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  height: 100vh;
+  max-width: 100%;
 }
+
 .signIn-btn {
   border-radius: 10px;
   font-size: 30px;
@@ -51,6 +54,7 @@ body {
   position: absolute;
   z-index: 1;
   width: 100vw;
+  max-width: 100%;
 }
 
 .signOut-btn {
@@ -158,8 +162,8 @@ body {
   font-family: "Opens San";
   text-align: center;
   color: rgba(255, 255, 255, 0.1);
-  position: absolute;
-  top: 95vh;
+  /* position: absolute;
+  top: 135vh; */
   text-decoration: none;
 }
 .dev > a {
@@ -212,4 +216,9 @@ body {
   background-color: red;
   color: white;
   transition: all 1s;
+}
+
+.wizard {
+  width: 98vw;
+  max-width: 100%;
 }
