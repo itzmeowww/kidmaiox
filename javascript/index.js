@@ -1,14 +1,14 @@
 let DEBUG = true;
 // Your web app's Firebase configuration
 let firebaseConfig = {
-  apiKey: "AIzaSyAtjH1QQ6gf6eiTwbhpgPsd6_l3xvEeDjY",
-  authDomain: "esccode.firebaseapp.com",
-  databaseURL: "https://esccode.firebaseio.com",
-  projectId: "esccode",
-  storageBucket: "esccode.appspot.com",
-  messagingSenderId: "750706636484",
-  appId: "1:750706636484:web:196762f26757b90390fb91",
-  measurementId: "G-VH6VDYQ4CS",
+  apiKey: "AIzaSyD0QQqsQRrlZ8OeUxNpBWP9lV6gx6aAR4M",
+  authDomain: "pb-kidmaiox.firebaseapp.com",
+  databaseURL: "https://pb-kidmaiox.firebaseio.com",
+  projectId: "pb-kidmaiox",
+  storageBucket: "pb-kidmaiox.appspot.com",
+  messagingSenderId: "442553110849",
+  appId: "1:442553110849:web:509d9827f199768eb811c0",
+  measurementId: "G-8MG29024Q1",
 };
 // Initialize Firebase
 
@@ -17,33 +17,12 @@ let provider = new firebase.auth.GoogleAuthProvider();
 let database = firebase.database();
 let db = firebase.firestore();
 
-let createUser = function (uid, username, email, status) {
+let createUser = function (uid) {
+  console.log(uid);
   database.ref("users/" + uid).set({
-    codename: "",
-    username: username,
-    email: email,
     hasHint: false,
     hintId: "",
-    hasHint2: false,
-    pickHint2: false,
-    status: status,
   });
-};
-
-let getStatus = function () {
-  let status = prompt("Tell me your class (E,S,C,K)", "");
-
-  if (
-    status == "E" ||
-    status == "S" ||
-    status == "C" ||
-    status == "e" ||
-    status == "s" ||
-    status == "c"
-  )
-    return "ESC";
-  else if (status == "K" || status == "k") return "KOSEN";
-  else return getStatus();
 };
 
 let setUserHint = function (uid, hintId) {
@@ -109,26 +88,6 @@ let showHint = function (id) {
   $(".hint").show();
 };
 
-let showHint2 = function (id) {
-  db.collection("hint")
-    .doc(id)
-    .onSnapshot(function (doc) {
-      let myHint = doc.data();
-      $(".hint2").text(myHint.hint2);
-    });
-  db.collection("hint")
-    .doc(id)
-    .get()
-    .then((snap) => {
-      let myHint = snap.data();
-      // console.log("showHint : myHint", myHint);
-      $(".hint2").text(myHint.hint2);
-    })
-    .catch((err) => {
-      console.log("From showHint2", err);
-    });
-  $(".hint2").show();
-};
 let giveHint = function () {
   var docRef = db.collection("hint").doc("list");
   let uid = firebase.auth().currentUser.uid;
@@ -222,6 +181,7 @@ let giveHint2 = function (id, show) {
 };
 
 let addQueue = function () {
+  $(".img-btn-hint").addClass("rotate");
   window.onbeforeunload = function (event) {
     try {
       var q = db.collection("queue");
@@ -256,43 +216,27 @@ let addQueue = function () {
 
 let ready = function () {
   $(".hint").hide();
-  $("#hint-btn").show();
-  $("#hint-btn").click(function () {
-    $("#hint-btn").text("Pairing");
+  $(".img-btn").unbind();
+  $(".img-btn-hint").show();
+  $(".img-btn-hint").click(function () {
     if (queueTime == null) addQueue();
   });
 };
-let init = function () {
-  $(".intro").hide();
-  $(".name-text").show();
-  $(".title").show();
-  $(".desc").show();
-  let user = firebase.auth().currentUser;
-  $(".name").text(user.displayName);
-  //console.log(user);
+let init = function (userId) {
+  console.log("init : ", userId);
   firebase
     .database()
-    .ref("/users/" + user.uid)
+    .ref("/users/" + userId)
     .once("value")
     .then(function (snapshot) {
-      //console.log(snapshot.val());
-      var email = snapshot.val() && snapshot.val().email;
-      if (email === null) {
-        let status = getStatus();
-        createUser(user.uid, user.displayName, user.email, status);
+      console.log(snapshot.val());
+      var hasHint = snapshot.val() && snapshot.val().hasHint;
+      if (hasHint === null) {
+        createUser(userId);
         ready();
       } else {
         if (snapshot.val().hasHint) {
           showHint(snapshot.val().hintId);
-          if (snapshot.val().pickHint2 == true) {
-            if (snapshot.val().hasHint2) showHint2(snapshot.val().hintId);
-          } else {
-            $("#hint2-btn").show();
-            $("#hint2-btn").click(function () {
-              $("#hint2-btn").hide();
-              giveHint2(snapshot.val().hintId, snapshot.val().hasHint2);
-            });
-          }
         } else {
           ready();
         }
@@ -300,67 +244,28 @@ let init = function () {
     })
     .catch((err) => {
       console.log(err);
-      alert("Please use email with @mail.kmutt.ac.th");
     });
 };
 
-let lastAuth = function (user) {
-  if (user) {
-    let email = user.email;
-    $(".signIn-btn").hide();
-    if (
-      email.split("@")[1] === "mail.kmutt.ac.th" ||
-      (DEBUG && email.split("@")[1] === "promma.ac.th")
-    ) {
-      $(".signOut-container").show();
-      $(".signOut-btn").click(function () {
-        firebase
-          .auth()
-          .signOut()
-          .then(() => {
-            // alert("Sign out");
-            window.location.reload();
-            //firebase.auth().signInWithRedirect(provider);
-          });
-      });
-      init();
-    } else {
-      $(".signIn-btn").show();
-      $(".signIn-btn").text("Click Me Now");
-      alert("Please use email with @mail.kmutt.ac.th");
-    }
+let lastAuth = function (userId) {
+  console.log(userId);
+  if (userId.length === 5) {
+    $(".img-btn").hide();
+    init(userId);
   } else {
-    $(".signIn-btn").text("Click Me Now");
+    alert("Please check your ID");
   }
 };
 
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-firebase.auth().onAuthStateChanged((user) => {
-  lastAuth(user);
-});
-
-firebase
-  .auth()
-  .getRedirectResult()
-  .then(function (result) {
-    var user = result.user;
-    //lastAuth(user);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
-
 $(document).ready(function () {
+  $(".signIn-btn").text("Click Me Now");
   $("#hint-btn").hide();
   $(".hint").hide();
   $(".desc").hide();
   $(".title").hide();
   $(".name-text").hide();
-  $(".close-ghost").click(() => {
-    $(".ghost-container").hide();
-  });
-  $(".signIn-btn").click(function () {
-    $(".signIn-btn").text("Loading...");
-    firebase.auth().signInWithRedirect(provider);
+  $(".img-btn").click(() => {
+    lastAuth($("#userId").val());
+    $(".img-btn").addClass("img-btn-hint");
   });
 });

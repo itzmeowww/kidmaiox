@@ -4,7 +4,7 @@ let DEBUG = true;
 
 var wb = XLSX.utils.book_new();
 wb.Props = {
-  Title: "ESC x KOSEN",
+  Title: "PB",
 
   Author: "6200313@kvis.ac.th",
   CreatedDate: new Date(),
@@ -19,14 +19,14 @@ function s2ab(s) {
 
 // Your web app's Firebase configuration
 let firebaseConfig = {
-  apiKey: "AIzaSyAtjH1QQ6gf6eiTwbhpgPsd6_l3xvEeDjY",
-  authDomain: "esccode.firebaseapp.com",
-  databaseURL: "https://esccode.firebaseio.com",
-  projectId: "esccode",
-  storageBucket: "esccode.appspot.com",
-  messagingSenderId: "750706636484",
-  appId: "1:750706636484:web:196762f26757b90390fb91",
-  measurementId: "G-VH6VDYQ4CS",
+  apiKey: "AIzaSyD0QQqsQRrlZ8OeUxNpBWP9lV6gx6aAR4M",
+  authDomain: "pb-kidmaiox.firebaseapp.com",
+  databaseURL: "https://pb-kidmaiox.firebaseio.com",
+  projectId: "pb-kidmaiox",
+  storageBucket: "pb-kidmaiox.appspot.com",
+  messagingSenderId: "442553110849",
+  appId: "1:442553110849:web:509d9827f199768eb811c0",
+  measurementId: "G-8MG29024Q1",
 };
 // Initialize Firebase
 let Ids = [];
@@ -342,7 +342,7 @@ let save2excel = function () {
   var wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
   saveAs(
     new Blob([s2ab(wbout)], { type: "application/octet-stream" }),
-    "escnkosen.xlsx"
+    "pb.xlsx"
   );
 };
 

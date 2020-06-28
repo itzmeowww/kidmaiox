@@ -1,18 +1,37 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
 @font-face {
-  font-family: "nightmare";
-  src: url("./nightmare.TTF");
+  font-family: copper;
+  src: url("./OPTICopperplate.otf");
 }
 * {
-  font-family: "nightmare";
   max-width: 100%;
+  font-family: "copper";
+}
+
+@media screen and (min-width: 0) {
+  html {
+    background-size: 150vw auto;
+  }
+  .desc {
+    font-size: 22px;
+    font-weight: 550;
+  }
+}
+@media screen and (min-width: 700px) {
+  html {
+    background-size: auto 100vh;
+  }
+  .desc {
+    font-size: 30px;
+    font-weight: 500;
+  }
 }
 
 html {
-  /* background-image: url("../pics/bps.jpg"); */
-  /* background-repeat: no-repeat, no-repeat; */
+  background-image: url("../pics/bg.PNG");
 
-  background-color: black;
+  /* /* background-repeat: no-repeat, no-repeat; */
+
   font-size: 20px;
   color: snow;
 
@@ -26,27 +45,38 @@ html {
 
 .body-container {
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   flex-direction: column;
   height: 100vh;
   max-width: 100%;
 }
 
-.signIn-btn {
-  border-radius: 10px;
-  font-size: 30px;
-  font-weight: bold;
-  background-color: snow;
-  color: black;
-  border: black;
-  padding: 10px;
-  transition: all 0.5s;
+.img-btn {
+  top: 50vh;
+  width: 300px;
+  border-radius: 20px;
 }
-.signIn-btn:hover {
-  /* background-color: lightblue; */
-  color: red;
-  transition: all 0.5s;
+
+.img-form {
+  margin-top: 30vh;
+  width: 230px;
+  padding: 20px;
+  background-image: url("../pics/form.PNG");
+  background-repeat: no-repeat no-repeat;
+  background-size: 280px auto;
+}
+
+.img-form-inp {
+  background-color: rgba(0, 0, 0, 0);
+  border: 0px;
+  width: 160px;
+  height: 27px;
+  font-size: 20px;
+  margin-top: 5px;
+  margin-left: 35px;
+  margin-right: auto;
+  text-align: center;
 }
 
 .signOut-container {
@@ -134,18 +164,6 @@ html {
   position: absolute;
   top: 60px;
 }
-@media screen and (min-width: 0) {
-  .desc {
-    font-size: 22px;
-    font-weight: 550;
-  }
-}
-@media screen and (min-width: 500px) {
-  .desc {
-    font-size: 30px;
-    font-weight: 500;
-  }
-}
 
 .codename {
   margin-bottom: 20px;
@@ -221,4 +239,26 @@ html {
 .wizard {
   width: 98vw;
   max-width: 100%;
+}
+
+.rotate {
+  -webkit-animation: spin 4s linear infinite;
+  -moz-animation: spin 4s linear infinite;
+  animation: spin 4s linear infinite;
+}
+@-moz-keyframes spin {
+  100% {
+    -moz-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }
