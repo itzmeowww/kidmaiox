@@ -57,7 +57,7 @@ function updateOutput() {
   // console.log(ret);
   $(".output").val(ret);
 }
-function addToList(displayName, name, hint, hint2, email, id) {
+function addToList(displayName, hint, id) {
   //console.log("create", id);
 
   let theHint = $(".hintContainer:last");
@@ -68,7 +68,7 @@ function addToList(displayName, name, hint, hint2, email, id) {
   // theHint.children(".hint").text(hint);
   // theHint.children(".hint2").text(hint2);
   // theHint.children(".email").text(email);
-  theHint.children(".name").text(name);
+  theHint.children(".hint").text(hint);
   theHint.children(".del-btn").click(function () {
     if (confirm("Delete this hint?")) {
       db.collection("hint")
@@ -89,18 +89,11 @@ function addToList(displayName, name, hint, hint2, email, id) {
                   updateOutput();
                 });
               let idList = snap.data().id;
-              let idList2 = snap.data().id2;
               let all_id = snap.data().all_id;
               let index = idList.indexOf(id);
 
               if (index > -1) {
                 idList.splice(index, 1);
-              }
-
-              index = idList2.indexOf(id);
-
-              if (index > -1) {
-                idList2.splice(index, 1);
               }
 
               index = all_id.indexOf(id);
@@ -110,7 +103,6 @@ function addToList(displayName, name, hint, hint2, email, id) {
 
               db.collection("hint").doc("list").update({
                 id: idList,
-                id2: idList2,
                 all_id: all_id,
               });
               if (uid != "") {
@@ -118,9 +110,7 @@ function addToList(displayName, name, hint, hint2, email, id) {
                   .ref("users/" + uid + "/")
                   .update({
                     hasHint: false,
-                    hasHint2: false,
                     hintId: "",
-                    pickHint2: false,
                   })
                   .then(() => {
                     console.log("updated", uid);
@@ -137,20 +127,17 @@ function addToList(displayName, name, hint, hint2, email, id) {
     $(".updateForm").show();
     $(".updateForm").attr("target", id);
     $("#updateHint").val(hint);
-    $("#updateHint2").val(hint2);
-    $("#updateName").val(name);
+    // $("#updateHint2").val(hint2);
+    // $("#updateName").val(name);
   });
   theHint.show();
   theHint.attr("id", id);
   updateOutput();
 }
-let updateToList = function (displayName, name, hint, hint2, email, id) {
+let updateToList = function (displayName, hint, id) {
   theHintList[id] = {
     displayName: displayName,
-    codename: name,
     hint1: hint,
-    hint2: hint2,
-    email: email,
     id: id,
   };
   pendingLoadRealName++;
@@ -172,7 +159,7 @@ let updateToList = function (displayName, name, hint, hint2, email, id) {
   // theHint.children(".hint").text(hint);
   // theHint.children(".hint2").text(hint2);
   // theHint.children(".email").text(email);
-  theHint.children(".name").text(name);
+  theHint.children(".hint").text(hint);
   updateOutput();
 };
 let showList = function (idList) {
@@ -193,10 +180,9 @@ let showList = function (idList) {
           //console.log(element);
           addToList(
             element.name,
-            element.codename,
+
             element.hint,
-            element.hint2,
-            element.email,
+
             id
           );
 
@@ -207,14 +193,7 @@ let showList = function (idList) {
               $("#" + id).remove();
               delete theHintList[id];
             } else {
-              updateToList(
-                element.name,
-                element.codename,
-                element.hint,
-                element.hint2,
-                element.email,
-                id
-              );
+              updateToList(element.name, element.hint, id);
             }
           });
         })
@@ -300,40 +279,18 @@ let save2excel = function () {
     return;
   }
   wb.SheetNames.push("Test Sheet");
-  var ws_data = [
-    [
-      "ชื่อ",
-      "ชื่อสาย",
-      "คำใบ้ 1",
-      "คำใบ้ 2",
-      "email",
-      "",
-      "",
-      "",
-      "ชื่อพี่รหัส",
-    ],
-  ];
+  var ws_data = [["เลขรหัสน้อง", "คำใบ้", "", "", "", "ชื่อพี่รหัส"]];
   //write data
 
   for (id in theHintList) {
     if (theHintList.hasOwnProperty(id)) {
       let displayName = theHintList[id].displayName;
-      let codename = theHintList[id].codename;
+      // let codename = theHintList[id].codename;
       let hint1 = theHintList[id].hint1;
-      let hint2 = theHintList[id].hint2;
-      let email = theHintList[id].email;
+      // let hint2 = theHintList[id].hint2;
+      // let email = theHintList[id].email;
       let realName = theRealName[id];
-      ws_data.push([
-        displayName,
-        codename,
-        hint1,
-        hint2,
-        email,
-        "",
-        "",
-        "",
-        realName,
-      ]);
+      ws_data.push([displayName, hint1, "", "", "", realName]);
     }
   }
 
@@ -353,32 +310,23 @@ let handleSubmit = function () {
     .get()
     .then(function (snapshot) {
       //console.log(snapshot.data());
-      let all_id = snapshot.data().all_id;
-      let id = snapshot.data().id;
-      let id2 = snapshot.data().id2 || [];
+      let all_id = snapshot.data().all_id || [];
+      let id = snapshot.data().id || [];
       // showList(all_id);
-      let two = $("#two").prop("checked");
       let hint = $("#myHint").val();
       let name = $("#myRealName").val();
-      let hint2 = $("#myHint2").val();
-      let codename = $("#myName").val();
-      if (hint === "" || hint2 === "") {
+      if (hint === "") {
         alert("Hint can not be empty");
       } else if (name === "") {
         alert("Name can not be empty");
       } else {
         $("#myHint").val("");
-        $("#myHint2").val("");
-        $("#myName").val("");
         $("#myRealName").val("");
 
         docRef
           .add({
-            codename: codename,
-            email: "",
             hasChosen: false,
             hint: hint,
-            hint2: hint2,
           })
           .then(function (snap) {
             all_id.push(snap.id);
@@ -387,15 +335,11 @@ let handleSubmit = function () {
               realName: name,
             });
 
-            if (two == true) id2.push(snap.id);
-            else {
-              id.push(snap.id);
-            }
+            id.push(snap.id);
 
             docRef.doc("list").update({
               all_id: all_id,
               id: id,
-              id2: id2,
             });
           })
           .catch((err) => console.log(err));
@@ -411,23 +355,17 @@ let handleSubmit = function () {
 let handleUpdate = function () {
   $(".updateForm").hide();
   let hint = $("#updateHint").val();
-  let hint2 = $("#updateHint2").val();
-  let name = $("#updateName").val();
   let id = $(".updateForm").attr("target");
   let theHint = $("#" + id);
   theHint.children(".update-btn").click(function () {
     $(".updateForm").show();
     $(".updateForm").attr("target", id);
     $("#updateHint").val(hint);
-    $("#updateHint2").val(hint2);
-    $("#updateName").val(name);
   });
 
   //console.log(hint, name, id);
   db.collection("hint").doc(id).update({
     hint: hint,
-    hint2: hint2,
-    codename: name,
   });
 };
 $(document).ready(function () {

@@ -58,6 +58,17 @@ html {
   border-radius: 20px;
 }
 
+.img-hint {
+  margin-top: 10vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 280px;
+  height: 220px;
+  background-image: url("../pics/hint.PNG");
+  background-repeat: no-repeat no-repeat;
+  background-size: 280px auto;
+}
 .img-form {
   margin-top: 30vh;
   width: 230px;
@@ -79,67 +90,18 @@ html {
   text-align: center;
 }
 
-.signOut-container {
-  top: 10px;
-  position: absolute;
-  z-index: 1;
-  width: 100vw;
-  max-width: 100%;
-}
-
-.signOut-btn {
-  width: 35px;
-  height: 35px;
-  float: right;
-  margin-right: 10px;
-  border-radius: 15px;
-  align-items: center;
-  padding-top: 5px;
-  padding-left: 5px;
-  background-color: snow;
-  color: black;
-  border: black;
-  transition: all 0.5s;
-}
-
-.signOut-btn:hover {
-  /* background-color: lightblue; */
-
-  background-color: red;
-  transition: all 0.5s;
-}
-
-#hint-btn,
-#hint2-btn {
-  border-radius: 10px;
-  background-color: snow;
-  color: black;
-  border: black;
-  font-size: 30px;
-  font-weight: bold;
-  padding: 10px;
-  margin-top: 30px;
-  transition: all 0.5s;
-}
-#hint-btn:hover,
-#hint2-btn:hover {
-  color: red;
-  transition: all 0.5s;
-}
-.hint,
-.hint2 {
+.hint {
   text-align: center;
   color: white;
   font-size: 30px;
   transition: all 0.5s;
-  padding-bottom: 20px;
 }
 
-.hint:hover,
-.hint2:hover {
+.hint:hover {
   color: red;
   transition: all 0.5s;
 }
+
 .name {
   text-align: center;
   color: white;
