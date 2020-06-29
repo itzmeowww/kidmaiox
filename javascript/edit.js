@@ -279,7 +279,9 @@ let save2excel = function () {
     return;
   }
   wb.SheetNames.push("Test Sheet");
-  var ws_data = [["เลขรหัสน้อง", "คำใบ้", "", "", "", "ชื่อพี่รหัส"]];
+  var ws_data = [
+    ["เลขรหัสน้อง", "ชื่อน้อง", "คำใบ้", "", "", "", "ชื่อพี่รหัส"],
+  ];
   //write data
 
   for (id in theHintList) {
@@ -290,7 +292,7 @@ let save2excel = function () {
       // let hint2 = theHintList[id].hint2;
       // let email = theHintList[id].email;
       let realName = theRealName[id];
-      ws_data.push([displayName, hint1, "", "", "", realName]);
+      ws_data.push([id, displayName, hint1, "", "", "", realName]);
     }
   }
 
