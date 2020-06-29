@@ -100,7 +100,7 @@ html {
 }
 
 .hint:hover {
-  color: red;
+  color: black;
   transition: all 0.5s;
 }
 
