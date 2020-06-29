@@ -36,6 +36,9 @@ let provider = new firebase.auth.GoogleAuthProvider();
 let db = firebase.firestore();
 let database = firebase.database();
 
+let choseCount = 0;
+let hintCount = 0;
+
 let theHintList = {};
 let theRealName = {};
 let pendingLoadRealName = 0;
@@ -155,6 +158,8 @@ let updateToList = function (displayName, hint, id, uid) {
   if (displayName === undefined) displayName = "Not chosen";
   else {
     theHint.addClass("hasChosen");
+    choseCount++;
+    $(".hintCount").text(choseCount + " / " + hintCount);
   }
   theHint.children(".displayName").text(displayName);
   // theHint.children(".hint").text(hint);
@@ -168,8 +173,9 @@ let showList = function (idList) {
   let theHint = $(".hintContainer:last").clone();
   $(".hintList").empty();
   $(".hintList").append(theHint);
+  hintCount = idList.length;
+  $(".hintCount").text(choseCount + " / " + hintCount);
 
-  $(".hintCount").text(idList.length);
   var docRef = db.collection("hint");
   idList.forEach((id) => {
     if (id != "") {
