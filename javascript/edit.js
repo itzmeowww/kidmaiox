@@ -289,10 +289,11 @@ let save2excel = function () {
       let displayName = theHintList[id].displayName;
       // let codename = theHintList[id].codename;
       let hint1 = theHintList[id].hint1;
+      let userId = theHintList[id].uid;
       // let hint2 = theHintList[id].hint2;
       // let email = theHintList[id].email;
       let realName = theRealName[id];
-      ws_data.push([id, displayName, hint1, "", "", "", realName]);
+      ws_data.push([userId, displayName, hint1, "", "", "", realName]);
     }
   }
 
