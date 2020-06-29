@@ -134,11 +134,12 @@ function addToList(displayName, hint, id) {
   theHint.attr("id", id);
   updateOutput();
 }
-let updateToList = function (displayName, hint, id) {
+let updateToList = function (displayName, hint, id, uid) {
   theHintList[id] = {
     displayName: displayName,
     hint1: hint,
     id: id,
+    uid: uid,
   };
   pendingLoadRealName++;
   db.collection("secret")
@@ -193,7 +194,7 @@ let showList = function (idList) {
               $("#" + id).remove();
               delete theHintList[id];
             } else {
-              updateToList(element.name, element.hint, id);
+              updateToList(element.name, element.hint, id, element.uid);
             }
           });
         })
@@ -286,6 +287,7 @@ let save2excel = function () {
 
   for (id in theHintList) {
     if (theHintList.hasOwnProperty(id)) {
+      console.log(theHintList[id]);
       let displayName = theHintList[id].displayName;
       // let codename = theHintList[id].codename;
       let hint1 = theHintList[id].hint1;
